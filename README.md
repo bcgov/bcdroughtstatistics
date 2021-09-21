@@ -40,7 +40,8 @@ the remotes package.
 #### Example
 
 An html version of the drought statistics package can be generated for a
-specific natural resource management region in BC
+specific natural resource management region in BC using either
+drought_stats_wc() or drought_stats_to().
 
 
     library(bcdroughtstatistics)
