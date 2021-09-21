@@ -2,6 +2,7 @@
 rm(list=ls())
 library(bcsnowstats)
 
+
 basins <- c("Cariboo Natural Resource Region",
             "Kootenay-Boundary Natural Resource Region",
             "Northeast Natural Resource Region",
