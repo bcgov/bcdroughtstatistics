@@ -62,7 +62,7 @@ basins <- c("Cariboo Natural Resource Region",
 
 ## Get the Drought Statistics page for the West Coast without saving
 
-drought_stats_wc(basin = "West Coast Natural Resource Region", save = FALSE)
+drought_stats_wc(basin = "West Coast Natural Resource Region")
 ```
 
 
