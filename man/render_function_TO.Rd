@@ -4,12 +4,12 @@
 \alias{render_function_TO}
 \title{Function for rendering the Thompson Okanagan version of the RMarkdown drought product}
 \usage{
-render_function_TO(basin, save_loc = "/inst/")
+render_function_TO(basin, save_loc = "")
 }
 \arguments{
 \item{basin}{The basin you want to render the drought statistics html page for}
 
-\item{save_loc}{The path that you want to save a copy of the html file at. Defaults to '/inst/'}
+\item{save_loc}{The path that you want to save a copy of the html file at. Defaults to ''}
 }
 \value{
 The function returns a html version of the drought product
