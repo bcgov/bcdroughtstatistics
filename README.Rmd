@@ -26,11 +26,9 @@ This package features three functions that render three variations on the drough
 
 ### Installation
 
-You can install bcdroughtstatistics() from this Github repository using the remotes package:
+You can install bcdroughtstatistics() from this Github repository using the remotes package though install.packages("remotes").
 
 ```{r install}
-install.packages("remotes")
-
 remotes::install_github("bcgov/bcdroughtstatistics")
 library(bcdroughtstatistics)
 ```
