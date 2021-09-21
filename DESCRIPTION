@@ -1,0 +1,38 @@
+Package: bcdroughtstatistics
+Title: Creates tables of drought relevant statistics by natural resource management area
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Ashlee",
+             family = "Jollymore",
+             role = c("aut", "cre"),
+             email = "Ashlee.Jollymore@gov.bc.ca"),
+      person(given = "Province of British Columbia",
+             role = "cph"))
+Description: This package collates, analyses and presents drought relevant statistics by natural resource region
+License: Apache License (== 2.0) | file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    knitr,
+    rmarkdown,
+    sf,
+    bcmaps,
+    ggplot2,
+    dplyr,
+    methods,
+    magrittr,
+    tidyhydat,
+    esri2sf,
+    tidyhydat.ws,
+    rlang
+Suggests: 
+    ggspatial,
+    ggrepel,
+    magick,
+    shadowtext,
+    ggsn
+VignetteBuilder: knitr
+URL: https://github.com/bcgov/bcdroughtstatistics
+BugReports: https://github.com/bcgov/bcdroughtstatistics/issues

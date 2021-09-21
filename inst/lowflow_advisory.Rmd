@@ -1,0 +1,396 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+Low Flow Advisory
+
+Overview
+This advisory shows sites that are exhibiting low flow conditions. It contains a synopsis of current conditions, and tables of sites that are experiencing low flow conditions (arranged by Regional Management District). Specifically, this advisory shows stream sites that have dropped below their 10th percentile for seven day mean discharge. This corresponds to a Level 3 drought or worse within the BC Drought Response Plan. 
+
+Synopsis of Conditions
+Continued precipitation deficits continue to impact streamflows throughout southern BC and (less so) into the Peace region. The combination of these deficits, as well as increased demand from both human and ecological systems due to heat, has translated into decreased streamflow, especially within smaller systems but also beginning to show up in larger systems.
+
+Advisory - Sites at Low (<10th percentile) Seven Day Streamflow Percentiles
+Seven Day average streamflow percentiles compare current stream flows (averaged over the last seven days) to the same seven day period in a site’s historic record. Streamflows are averaged over seven days to minimize the impact of short term fluctuations, and gives a better representation of the overall trend in streamflow. Percentiles give an indication of how likely a seven day streamflow value is; for example, the 50th percentile represents normal conditions, where a streamflow percentile of 10 indicates that this value has occurred only 10% of the time within the history of the site. Data is sourced from real-time and historic [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html) data. The seven day average streamflow is a core indicator for determining the level of drought within a specific region and watershed according to the [Drought Response Plan (2021)](https://www2.gov.bc.ca/assets/gov/environment/air-land-water/water/drought-info/drought_response_plan_final.pdf). 
+
+```{r, message = FALSE, warnings = FALSE, include = FALSE}
+
+library(tidyverse)
+library(tmap)
+library(bcmaps)
+library(tidyhydat)
+library(lubridate)
+library(sf)
+library(sp)
+library(rmapshaper)
+library(kableExtra)
+library(knitr)
+library(RcppRoll)
+library(shadowtext)
+library(bcmapsdata)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(ggspatial)
+library(ggrepel)
+library(magick)
+library(ggsn)
+library(tidyhydat.ws)
+library(RColorBrewer)
+library(leaflet)
+library(remotes)
+#install_github("yonghah/esri2sf")
+library(esri2sf)
+library(bcdroughtstatistics)
+
+bc_stns <- hy_stations() %>%
+  dplyr::filter(HYD_STATUS == "ACTIVE") %>%
+  dplyr::filter(PROV_TERR_STATE_LOC == "BC") %>%
+  tidyhydat::pull_station_number()
+
+# Get drought statistics for all active stations in BC
+table_stats <- bcdroughtstatistics::drought_statistics(bc_stns) 
+
+# add in the demarcation of drought levels according to the current system
+drought_thresh <- c(
+    "Not ranked",
+    "Lowest Recorded",
+    "0-2nd Percentile",
+    "2-5th Percentile",
+    "5-10th Percentile",
+    "10-20th Percentile",
+    "20-30th Percentile",
+    "30-75th Percentile",
+    "76-90th Percentile",
+    "Much above normal (>90th Percentile)", "Highest Recorded"
+  )
+
+table_stats_new <- table_stats %>%
+  dplyr::mutate(per_q7 = as.numeric(`Percentile - Q7`, digits = 0)) %>%
+  dplyr::mutate(q7_per_thresh = case_when(
+      is.na(per_q7) ~ drought_thresh[1],
+      # NEW SYSTEM *****
+      per_q7 <= 1 ~ drought_thresh[2],
+      per_q7 > 1 & per_q7 <= 2 ~ drought_thresh[3],
+      per_q7 > 2 & per_q7 <= 5 ~ drought_thresh[4],
+      per_q7 > 5 & per_q7 <= 10 ~ drought_thresh[5],
+      per_q7 > 10 & per_q7 <= 20 ~ drought_thresh[6],
+      per_q7 > 20 & per_q7 <= 30 ~ drought_thresh[7],
+      per_q7 > 30 & per_q7 <= 75 ~ drought_thresh[8],
+      per_q7 > 75 & per_q7 <= 90 ~ drought_thresh[9],
+      per_q7 > 90 & per_q7 < 99 ~ drought_thresh[10],
+      per_q7 > 99  ~ drought_thresh[11],
+    )) 
+
+# ------------------
+# Assign each of the sites to a natural resource region and sort by Natural Resource Region
+# Convert to spatial object
+table_sf <-  sf::st_as_sf(
+    table_stats_new %>% dplyr::filter(!is.na(LONGITUDE)),
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = 4326,
+    agr = "constant"
+  ) %>%
+  bcmaps::transform_bc_albers() %>%
+  st_transform(4326)
+
+# Get the polygons for each of the natural resource regions
+regions <- bcmaps::nr_regions() %>%
+  st_transform(4326)
+# ensure that the crs is correct
+regions <- st_transform(regions, CRS("+init=epsg:4326"))
+table_sf <- st_transform(table_sf, CRS("+init=epsg:4326"))
+
+# Function for assigning natural resource region
+assign_region <- function(region_i, region_name) {
+  
+  region_select <- region_i %>%
+    dplyr::filter(REGION_NAME == region_name) %>% 
+    dplyr::select(REGION_NAME, geometry)
+  
+  out <- sf::st_join(table_sf, region_select, 
+                    left = FALSE) 
+}
+# Apply function over all regions
+table_region_list <- lapply(unique(regions$REGION_NAME), 
+                       assign_region, 
+                       region_i = regions)
+
+# Unfold
+table_region <- data.table::rbindlist(table_region_list) %>%
+  dplyr::select(-geometry) %>%
+  dplyr::full_join(table_stats_new) %>%
+  dplyr::filter(!is.na(LONGITUDE)) %>%
+  sf::st_as_sf(
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = 4326,
+    agr = "constant"
+  ) %>%
+  bcmaps::transform_bc_albers()%>%
+  st_transform(4326)
+  
+# -----------------
+# Add in the drought polygon
+drought <- bcdroughtstatistics::scrape_drought_map() %>%
+  as("Spatial") %>%
+  sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
+  sp::spTransform(CRS("+init=epsg:4326"))
+
+drought_st <- st_make_valid(st_as_sf(drought, 4326)) %>%
+  st_transform(4326) %>% 
+  sf::st_as_sf(
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = 4326,
+    agr = "constant"
+  ) %>%
+  bcmaps::transform_bc_albers() %>%
+  dplyr::select(BasinName, geometry) %>%
+  st_transform(4326)
+  
+# Function for assigning the drought polygon
+assign_droughtregion <- function(drought_p, drought_polygon_i) {
+  
+  drought_select <- drought_p %>%
+    dplyr::filter(BasinName == drought_polygon_i) 
+  
+  out <- sf::st_join(table_region, drought_select, 
+                    left = FALSE)
+  
+  if (dim(out)[1] == 0) {
+    out_i <- NULL
+  } else {
+    out_i <- out
+  }
+}
+
+# Run function over all drought polygons
+table_drought_list <- lapply(unique(drought_st$BasinName), 
+                       assign_droughtregion, 
+                       drought_p = drought_st)
+
+table_droughtbasin <- data.table::rbindlist(table_drought_list, fill = TRUE, use.names=TRUE)
+
+# -----------------
+# Add in the Drought Level by the percentile
+table_droughtbasin_level <- table_droughtbasin %>%
+      dplyr::mutate(drought_level = case_when(
+      is.na(`Percentile - Q7`) ~ "Not ranked",
+      `Percentile - Q7` <= 2 ~ "Drought Level 5",
+      `Percentile - Q7` > 2 & `Percentile - Q7` <= 5 ~ "Drought Level 4",
+      `Percentile - Q7` > 5 & `Percentile - Q7` <= 10 ~ "Drought Level 3",
+      `Percentile - Q7` > 10 & `Percentile - Q7` <= 20 ~ "Drought Level 2",
+      `Percentile - Q7` > 20 & `Percentile - Q7` <= 30 ~ "Drought Level 1",
+      `Percentile - Q7` > 30 & `Percentile - Q7` <= 5 ~ "Drought Level 0"
+    )) %>%
+  dplyr::arrange(REGION_NAME, `Percentile - Q7`, BasinName) %>%
+  dplyr::rename(`Natural Resource Region` = REGION_NAME, `Drought Region` = BasinName) %>%
+  tidyr::extract(geometry, c('LONGITUDE', 'LATITUDE'), '\\((.*), (.*)\\)', convert = TRUE) 
+
+# Filter to those below their 10th percentile - drought level 3 or below
+table_10 <- table_droughtbasin_level %>%
+  dplyr::filter(`Percentile - Q7` <= 10) 
+
+```
+
+Map of all seven day percentiles
+- map of all sites with seven day percentile less than 10
+- Option to add the drought polygons and management areas on map
+
+The below map shows all sites within the prvince of BC whose 7 day mean streamflow percentile has dropped below the 10th percentile. Both the regions used to determine drought levels (Drought Basins) or the Natura Resource Management area may be added to the map.
+
+``` {r map}
+# Create basemap for the interactive map - this will allow you to simply add layers to the basemap
+# Expected NAWW percentile bins
+expected <- c("Not ranked", 
+              "Drought Level 5",
+              "Drought Level 4",
+              "Drought Level 3")
+
+naww_pal <- c("#FFFFFF","#730000","#E60000", "#E69800")
+
+pal <- colorFactor(palette = c("#730000","#E60000", "#e69800", "#FFD37F","#FFFF00", "e9ffbe", "#FFFFFF"), 
+                   domain = c("Drought Level 5", "Drought Level 4", "Drought Level 3", "Drought Level 2", "Drought Level 1", "Drought Level 0", "Not ranked"))
+
+pal_10 <- colorFactor(palette = c("#730000","#E60000", "#e69800", "#FFFFFF"), 
+                   domain = c("Drought Level 5", "Drought Level 4", "Drought Level 3", "Not ranked"))
+
+                                                                              
+wardpal <- colorFactor(viridis::viridis(7), regions$REGION_NAME)
+
+# Get the center of each natural resource area for labels
+centers <- data.frame(rgeos::gCentroid(as(regions, Class = 'Spatial'), byid = TRUE))
+centers$region <- regions$REGION_NAME
+
+basemap <- leaflet() %>%
+   addProviderTiles("Esri.WorldTopoMap") %>%
+   fitBounds(48, 50, -139, -120) %>%
+   setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
+   addMapPane("Natural Resource Districts", zIndex = 400) %>% 
+   addMapPane("BC Provincial Drought Polygons", zIndex = 405) %>%
+   addLayersControl(baseGroups = c("Natural Resource Districts", "BC Provincial Drought Polygons"),
+                   options = layersControlOptions(collapsed = F)) %>%
+   addLayersControl(overlayGroups = c("Natural Resource Districts", "BC Provincial Drought Polygons"),
+                   options = layersControlOptions(collapsed = F)) %>%
+   addPolygons(data = drought,
+              group = "BC Provincial Drought Polygons",
+              weight = 3,
+              color = '#2900b6',
+              fillColor = '#white', 
+              fillOpacity = 0, # completely opaque BC Provincial Drought Polygons for now
+              highlightOptions = highlightOptions(color = '#00cccc', weight = 3,
+                                                  bringToFront = TRUE),
+              label = ~drought@data$BasinName,
+              popup = paste0("Drought Level = ", drought@data$DroughtLevel), 
+              options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
+   addPolygons(data = regions,
+              group = "Natural Resource Districts",
+              weight = 3,
+              #color = 'black',
+              color = ~wardpal(regions$REGION_NAME), 
+              fillOpacity = 0.2, 
+              highlightOptions = highlightOptions(color = "black", weight = 3,
+                                                  bringToFront = FALSE),
+              label = regions$REGION_NAME,
+              options = pathOptions(pane = "Natural Resource Districts")) %>%
+  # Add natural resource regions as markers
+  addLabelOnlyMarkers(data = centers,
+                      group = "Natural Resource Districts",
+                      lng = ~x, lat = ~y, label = ~region,
+                      labelOptions = labelOptions(noHide = TRUE, direction = 'top')) 
+
+  
+# Plot interactive plot
+basemap %>%
+   addMapPane("Streamflow - Seven Day Percentiles", zIndex = 410) %>%
+   addMapPane("Streamflow - Last 24 Hour Percentiles", zIndex = 420) %>%
+   addLayersControl(baseGroups = c("Streamflow - Seven Day Percentiles",
+                                   "Streamflow - Last 24 Hour Percentiles",
+                                   "BC Provincial Drought Polygons",
+                                   "Natural Resource Districts"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+   addLayersControl(overlayGroups = c("Streamflow - Seven Day Percentiles",
+                                   "Streamflow - Last 24 Hour Percentiles",
+                                   "BC Provincial Drought Polygons",
+                                   "Natural Resource Districts"),
+                   options = layersControlOptions(collapsed = F)) %>%
+   addCircleMarkers(data = table_10,
+                   lng = ~LONGITUDE, 
+                   lat = ~LATITUDE,
+                   group = "Streamflow - Seven Day Percentiles",
+                   radius = 5,
+                   fillColor = ~pal_10(as.factor(table_10$drought_level)),
+                   fillOpacity = 1,
+                   color = "black", opacity = 0.7, weight = 1.5,
+                   popup = paste0(table_10$`Station Name`,", ", table_10$`ID`, "<br>",
+                            "Seven Day Discharge (m3/s) = ", round(table_10$`Latest 7 Day Q (m3/s)`, digits = 2), "<br>", 
+                            "7 Day Discharge Percentile = ", round(table_10$`Percentile - Q7`, digits = 0),  " | Category: ", table_10$q7_per_thresh, "<br>",
+                            "Drought Level: ", table_10$drought_level, "<br>",
+                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_10$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                            "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", table_10$`ID`, ".html", "\" target='_blank'>Link to Interactive Hydrograph (new tab)</a>"),
+                   label = ~paste0(table_10$`Station Name`,", ", table_10$`ID`, " ", table_10$q7_per_thresh),
+              options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
+  # Last 24 hours 
+   addCircleMarkers(data = table_10,
+                   lng = ~LONGITUDE, lat = ~LATITUDE,
+                   group = "Streamflow - Last 24 Hour Percentiles",
+                   radius = 5,
+                   fillColor = ~pal_10(as.factor(table_10$drought_level)),
+                   fillOpacity = 1,
+                   color = "black", opacity = 0.7, weight = 1.5,
+                   popup = paste0(table_10$`Station Name`,", ", table_10$`ID`, "<br>",
+                            "Discharge Over Last 24 Hours (m3/s) = ", round(table_10$`Last 24 hour Q (m3/s)`, digits = 2), "<br>", 
+                            "Percentile = ", round(table_10$`Percentile - Last 24 Hour Q`, digits = 0), "<br>", 
+                            "Percentile Category: ", table_10$pct_bin_24hours, "<br>",
+                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_10$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                            "<a href=\"", "http://bcrfc.env.gov.bc.ca/Real-time_Data/Interactive_Q_process/InteractivePlots/dailyQ_interactive/", table_10$`ID`, "_dailyQ.html", "\" target='_blank'>Link to Interactive Hydrograph (new tab)</a>"),
+                   label = ~paste0(table_10$`Station Name`,", ", table_10$`ID`, " ", table_10$pct_bin_24hours),
+              options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
+     addLegend(colors = naww_pal,
+            labels = expected,
+            title = paste0("7 Day Streamflow Percentile Colours")) 
+```
+
+
+# Tables of Drought Statistics - Arranged by Region
+
+The tables below show drought statistics for all of the sites within the province whose 7-day mean streamflow has dropped below their 10th percentile. Statistics are arranged according to natural resource region.
+
+These statistics include:
+
+  - **Last 24 hour Discharge**: Mean discharge taken over the last 24 hours (in m^3^/s)
+  - **Percentile - Last 24 Hour Discharge**: Percentile of the average discharge over the last 24 hours
+  - **Latest 7 Day Discharge**: Rolling 7-day average of daily mean discharge for today's date. All 7 day means are calculated based on the past 7 days.
+  - **Percentile - 7 Day Discharge**:  Percentile of the rolling 7 day average of daily mean discharge measurements to the 7 day rolling mean of the historical daily values. 
+  - **Historic Mean 7 Day Discharge**: Value of the rolling 7-day averaged daily mean discharge value for today's date, calculated using the station's historic data (in m^3^/s).
+  - **Percent of Daily Mean 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the mean 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Mean 7 Day Discharge *100)
+  - **Historic Median 7 Day Discharge**: Value of the rolling 7-day averaged daily median discharge value for today's date, calculated using the station's historic data (in m^3^/s).
+  - **Percent of Daily Median 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the median 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Median 7 Day Discharge *100).
+  - **Historic Min 7 Day Discharge**: The minimum 7 day averaged mean daily discharge value for today's date within the historic record (in m^3^/s).
+  - **MAD (m^3^/s) and % MAD**: Flow needs during the  summer will range from juvenile rearing flows near 10-20% (preferred) MAD to adult salmon/char passage flows (>20% MAD) required prior to spawning.  Sub-standard flows (<10% MAD) can affect fish populations by reducing the area and quality of riffle habitats that generate fish food and aeration.  Flows nearing 5% MAD are considered sub-optimal for fish rearing and migration, indicate a degradation of instream habitat and may require restrictions on water use. 
+  - **Mean Max Daily Temp (last 7 days; deg C)**: Mean of the max daily temperatures from the past week. Temperatures greater than 20 degrees C can indicate increased stress on fish populations.
+  - **Max temp over last 24 hours (degC)**: Maximum temperature over the last 24 hours (degree C).
+  - **Dates above 23 degC and 20 degC in last 7 days**: Dates from the past week that the stream temperature has gone beyond either 20 or 23 degrees C.
+  
+**Regulation Status** refers to whether flows are natural or regulated by human activities such as dams; this (as well as the **Basin Area**) were determined by the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html).
+  
+Data was updated on **`r format(Sys.Date(), '%d %B, %Y')`**.
+
+``` {r table}
+
+table_droughtbasin_level %>%
+   dplyr::select(-LATITUDE, -LONGITUDE, -per_q7) %>%
+   dplyr::rename(`Percentile Category - Last 24 Hour Discharge` = pct_bin_24hours, 
+                `Percentile Category - 7 Day Discharge` = q7_per_thresh,
+                `MAD (m^3^/s)` = `MAD (m^3/s)`,
+                `Basin Area (km^2^)` = `Basin Area (km2)`,
+                `Latest 7 Day Discharge (m^3^/s)`= `Latest 7 Day Q (m3/s)`,
+                `Last 24 hour Discharge (m^3^/s)` = `Last 24 hour Q (m3/s)`,
+                `Percent of Daily Mean 7 Day Discharge (%; Historic Mean 7 Day Discharge in m^3^/s)` = `Percent of Daily Mean Q7 (%; Historic Mean Q7 in m3/s)`,
+                `Percent of Daily Median 7 Day Discharge  (%; Historic Median 7 Day Discharge  in m^3^/s)` = `Percent of Daily Median Q7 (%; Historic Median Q7 in m3/s)`,
+                `Historic Min 7 Day Discharge (m^3^/s)` = `Historic Min 7 Day Q (m3/s)`,
+                `MAD Category` = MAD_bin,
+                `Percentile - 7 Day Discharge` = `Percentile - Q7`,
+                `Percentile - Last 24 Hour Discharge` = `Percentile - Last 24 Hour Q`
+                ) %>%
+   dplyr::arrange(`Natural Resource Region`,`Drought Region`, `Percentile - Last 24 Hour Discharge`, `Percentile - 7 Day Discharge`) %>%
+   dplyr::rename(`Mean Max Daily Temp (last 7 days; deg C)` = `Mean max temp from last 7 days (degC)`) %>%
+   dplyr::select(-Date) %>%
+   dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
+    dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
+                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
+                                                           ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
+                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                                  ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
+                                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
+                                                                                ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
+                                                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
+                                                                                              "#000000"))))))))) %>%
+    dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
+                                            color = ~pal(q7_per_thresh))) %>%
+    dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
+                                    color = ifelse(is.na(`% MAD`), "#000000",
+                                        ifelse(`% MAD`  <= 5, "#F90010",
+                                                           ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
+    dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
+                                                                     color = ifelse(is.na(`Mean Max Daily Temp (last 7 days; deg C)`), "#000000",
+                                                                       ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#F90010", "#0003F6")))) %>%
+    dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
+                                                                   color = ifelse(is.na(`Max temp over last 24 hours (degC)`), "#000000",
+                                                                     ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#0003F6")))) %>%
+    kableExtra::kbl(format = "html", 
+          digits = 2, 
+          align = rep('c'), 
+          booktabs = T,
+          escape = F,
+          row.names = FALSE) %>%
+          #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
+    kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    column_spec(20, width = "3cm")
+
+```
+
+
+
