@@ -18,23 +18,51 @@ If you have bcgovr installed and you use RStudio, click the 'Insert BCDevex Badg
 
 # bcdroughtstatistics
 
-Description of package
+The primary output of this package are RMarkdown products that create tables and maps of drought relevant statistics for the province of British Columbia. These RMarkdown drought statistics packages are aligned by natural resource region, and have been developed with the input from staff from these regions who are tasked with managing and monitoring the progression of drought. Drought statistics are compiled to demonstrate the severity of hydrologic drought within a particular natural resource management region. Also included is a 'Low Flow Advisory' RMarkdown product that shows which streams across the entire province are low, and thus experiencing moderate to severe hydrologic drought impacts.
 
 ### Features
+This package features three functions that render three variations on the drought statistics product. Two of the functions return drought statistics products tailored for specific regions within British Columbia; the third function returns the Low Flow Advisory product.
+
 
 ### Installation
+
+You can install bcdroughtstatistics() from this Github repository using the remotes package:
+
+```{r install}
+install.packages("remotes")
+
+remotes::install_github("bcgov/bcdroughtstatistics")
+library(bcdroughtstatistics)
+```
 
 ### Usage
 
 #### Example
 
-This is a basic example which shows you how to solve a common problem:
+An html version of the drought statistics package can be generated for a specific natural resource management region in BC 
 
 ```{r example}
-## basic example code
+
+library(bcdroughtstatistics)
+
+# All of the NRM regions in BC
+basins <- c("Cariboo Natural Resource Region",
+            "Kootenay-Boundary Natural Resource Region",
+            "Northeast Natural Resource Region",
+            "Omineca Natural Resource Region",
+            "Skeena Natural Resource Region",
+            "South Coast Natural Resource Region",
+            "Thompson-Okanagan Natural Resource Region",
+            "West Coast Natural Resource Region")
+
+## Get the Drought Statistics page for the West Coast without saving
+
+drought_stats_wc(basin = "West Coast Natural Resource Region", save = FALSE)
 ```
 
+
 ### Project Status
+In development.
 
 ### Getting Help or Reporting an Issue
 
