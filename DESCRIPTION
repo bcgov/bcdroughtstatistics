@@ -1,11 +1,15 @@
 Package: bcdroughtstatistics
 Title: Creates tables of drought relevant statistics by natural resource management area
-Version: 0.0.0.9000
+Version: 0.0.1.0000
 Authors@R: 
     c(person(given = "Ashlee",
              family = "Jollymore",
              role = c("aut", "cre"),
              email = "Ashlee.Jollymore@gov.bc.ca"),
+      person(given = "Sam",
+             family = "Albers",
+             role = c("aut"),
+             email = "Sam.Albers@gov.bc.ca"),
       person(given = "Province of British Columbia",
              role = "cph"))
 Description: This package collates, analyses and presents drought relevant statistics by natural resource region
