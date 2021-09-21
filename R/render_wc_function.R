@@ -13,21 +13,16 @@
 
 #' Function for rendering the West Coast RMarkdown product
 #' @param basin The basin you want to render the drought statistics html page for
-#' @param save_loc The path that you want to save a copy of the html file at. Defaults to FALSE (will not save html versio)
+#' @param save_loc The path that you want to save a copy of the html file at. Defaults to ''
 #' @keywords drought
 #' @importFrom rmarkdown render
 #' @export
 #' @examples
 #' @return The function returns a html version of the drought product
-drought_stats_wc <- function(basin, save_loc = FALSE) {
+drought_stats_wc <- function(basin, save_loc = '') {
 
   rmarkdown::render(paste0("inst/regional_streamflow_html.Rmd"),
                     params = list(region = basin),
                     output_file = paste0(save_loc, gsub(" ", "", basin)  ,  ".html"))
-  # Save a copy for this date
-  if (save_loc != FALSE) {
-    file.copy(paste0(save_loc, gsub(" ", "", basin)  ,  ".html"),
-            paste0(save_loc, gsub(" ", "", basin)  ,"_", Sys.Date(),  ".html"),
-            overwrite = TRUE)
-  }
+
 }
