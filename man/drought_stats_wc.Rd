@@ -4,12 +4,12 @@
 \alias{drought_stats_wc}
 \title{Function for rendering the West Coast RMarkdown product}
 \usage{
-drought_stats_wc(basin, save_loc = FALSE)
+drought_stats_wc(basin, save_loc = "/inst/")
 }
 \arguments{
 \item{basin}{The basin you want to render the drought statistics html page for}
 
-\item{save_loc}{The path that you want to save a copy of the html file at. Defaults to FALSE (will not save html versio)}
+\item{save_loc}{The path that you want to save a copy of the html file at. Defaults to '/inst/'}
 }
 \value{
 The function returns a html version of the drought product
