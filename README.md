@@ -28,7 +28,12 @@ Columbia; the third function returns the Low Flow Advisory product.
 ### Installation
 
 You can install bcdroughtstatistics() from this Github repository using
-the remotes package though install.packages(“remotes”).
+the remotes package.
+
+    install.packages("remotes")
+
+    remotes::install_github("bcgov/bcdroughtstatistics")
+    library(bcdroughtstatistics)
 
 ### Usage
 
@@ -36,6 +41,23 @@ the remotes package though install.packages(“remotes”).
 
 An html version of the drought statistics package can be generated for a
 specific natural resource management region in BC
+
+
+    library(bcdroughtstatistics)
+
+    # All of the NRM regions in BC
+    basins <- c("Cariboo Natural Resource Region",
+                "Kootenay-Boundary Natural Resource Region",
+                "Northeast Natural Resource Region",
+                "Omineca Natural Resource Region",
+                "Skeena Natural Resource Region",
+                "South Coast Natural Resource Region",
+                "Thompson-Okanagan Natural Resource Region",
+                "West Coast Natural Resource Region")
+
+    ## Get the Drought Statistics page for the West Coast without saving
+
+    drought_stats_wc(basin = "West Coast Natural Resource Region", save = FALSE)
 
 ### Project Status
 
