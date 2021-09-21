@@ -13,22 +13,16 @@
 
 #' Function for rendering the Thompson Okanagan version of the RMarkdown drought product
 #' @param basin The basin you want to render the drought statistics html page for
-#' @param save_loc The path that you want to save a copy of the html file at. Defaults to FALSE (will not save html versio)
+#' @param save_loc The path that you want to save a copy of the html file at. Defaults to ''
 #' @keywords drought
 #' @importFrom rmarkdown render
 #' @export
 #' @examples
 #' @return The function returns a html version of the drought product
-render_function_TO <- function(basin, save_loc = FALSE){
+render_function_TO <- function(basin, save_loc = '') {
 
   rmarkdown::render(paste0("inst/TO_droughtstats_html.Rmd"),
                     params = list(region = basin),
                     output_file = paste0(save_loc, gsub(" ", "", basin)  ,  ".html"))
 
-  # Save a copy for this date
-  if (save_loc != FALSE) {
-   file.copy(paste0(save_loc, gsub(" ", "", basin)  ,  ".html"),
-            paste0(save_loc, gsub(" ", "", basin)  ,"_", Sys.Date(),  ".html"),
-            overwrite = TRUE)
-  }
 }
