@@ -377,7 +377,7 @@ if (params$table_format == "html") {
                    color = "black", opacity = 0.7, weight = 1.5,
                    popup = paste0(interactive_data$`Station.Name`,", ", table_stats_new$`ID`, "<br>",
                             "Seven Day Discharge (m3/s) = ", round(interactive_data$Latest.7.Day.Q..m3.s., digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data$q7_per_thresh, "<br>",
+                            "Percentile: ", interactive_data$Percentile...Q7 ," | Category: ", interactive_data$q7_per_thresh, "<br>",
                             "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"),
@@ -393,8 +393,7 @@ if (params$table_format == "html") {
                    color = "black", opacity = 0.7, weight = 1.5,
                    popup = paste0(interactive_data$`Station.Name`,", ", table_stats_new$`ID`, "<br>",
                             "Discharge Over Last 24 Hours (m3/s) = ", round(interactive_data$Last.24.hour.Q..m3.s., digits = 2), "<br>", 
-                            "Percentile = ", round(interactive_data$Percentile...Last.24.Hour.Q, digits = 0), "<br>", 
-                            "Percentile Category: ", interactive_data$q24_per_thresh, "<br>",
+                            "Percentile = ", round(interactive_data$Percentile...Last.24.Hour.Q, digits = 0), " | Category: ", interactive_data$q24_per_thresh, "<br>",
                             "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
@@ -423,10 +422,8 @@ Data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 much_below_normal_tbl <- as.data.frame(table_stats_new) %>%
   dplyr::filter(per_q7 <= 10) %>%
   dplyr::select(`Station Name`, ID, `Regulation Status`, `Basin Area (km2)`,
-                `Latest 7 Day Q (m3/s)`, q7_per_thresh, 
-                `Percentile - Q7`,
-                `Last 24 hour Q (m3/s)`, 
-                `Percentile - Last 24 Hour Q`, q24_per_thresh) %>%
+                `Latest 7 Day Q (m3/s)`, `Percentile - Q7`, q7_per_thresh, 
+                `Last 24 hour Q (m3/s)`, `Percentile - Last 24 Hour Q`, q24_per_thresh) %>%
   dplyr::rename(`Percentile Category - Last 24 Hour Discharge` = q24_per_thresh, 
                 `Percentile Category - 7 Day Discharge` = q7_per_thresh,
                 `Basin Area (km^2^)` = `Basin Area (km2)`,
@@ -483,6 +480,8 @@ if (params$table_format == "html"){
   if(dim(much_below_normal_tbl)[1] > 0) {
     t_q7 <- t_q7%>%
       kableExtra::column_spec(6, bold = T) %>%
+      kableExtra::column_spec(7, bold = T) %>%
+      kableExtra::column_spec(9, bold = T) %>%
       kableExtra::column_spec(10, bold = T) 
   }
   
