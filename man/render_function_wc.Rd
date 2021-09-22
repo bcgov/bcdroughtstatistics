@@ -4,7 +4,7 @@
 \alias{render_function_wc}
 \title{Function for rendering the West Coast RMarkdown product}
 \usage{
-render_function_wc(basin, save_loc = "")
+render_function_wc(basin, save_loc = "directory")
 }
 \arguments{
 \item{basin}{The basin you want to render the drought statistics html page for}
