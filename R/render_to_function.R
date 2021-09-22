@@ -19,7 +19,22 @@
 #' @export
 #' @examples
 #' @return The function returns a html version of the drought product
-render_function_TO <- function(basin, save_loc = '') {
+render_function_TO <- function(basin, save_loc = "directory") {
+
+  if (save_loc == "directory") {
+
+    # Get working directory
+    wd = getwd()
+    # If the directory doesn't exist, then create the remarkdown_files folder
+    if (!dir.exists(paste0(wd, "/rmarkdown_files"))) {
+      print(paste0('Creating a new folder at: ', wd, "/rmarkdown_files", " where RMarkdown files will be saved"))
+      dir.create('rmarkdown_files')
+    }
+
+    save_loc_f = paste0(wd, "/rmarkdown_files/")
+  } else {
+    save_loc_f = save_loc
+  }
 
   rmarkdown::render(paste0("inst/TO_droughtstats_html.Rmd"),
                     params = list(region = basin),
