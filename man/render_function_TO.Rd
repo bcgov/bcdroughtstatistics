@@ -4,7 +4,7 @@
 \alias{render_function_TO}
 \title{Function for rendering the Thompson Okanagan version of the RMarkdown drought product}
 \usage{
-render_function_TO(basin, save_loc = "")
+render_function_TO(basin, save_loc = "directory")
 }
 \arguments{
 \item{basin}{The basin you want to render the drought statistics html page for}
