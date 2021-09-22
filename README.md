@@ -41,7 +41,10 @@ the remotes package.
 
 An html version of the drought statistics package can be generated for a
 specific natural resource management region in BC using either
-render_function_wc() or render_function_to().
+render_function_wc() or render_function_to(). If you don’t specify where
+to save the RMarkdown file, then the code will automatically create a
+new folder in your working directory named “rmarkdown_files” into which
+the html product will be saved.
 
 
     library(bcdroughtstatistics)
