@@ -44,7 +44,7 @@ library(bcdroughtstatistics)
 
 #### Example
 
-An html version of the drought statistics package can be generated for a specific natural resource management region in BC using either drought_stats_wc() or drought_stats_to(). 
+An html version of the drought statistics package can be generated for a specific natural resource management region in BC using either render_function_wc() or render_function_to(). 
 
 ```
 
@@ -62,7 +62,7 @@ basins <- c("Cariboo Natural Resource Region",
 
 ## Get the Drought Statistics page for the West Coast without saving
 
-drought_stats_wc(basin = "West Coast Natural Resource Region")
+render_function_wc(basin = "West Coast Natural Resource Region")
 ```
 
 

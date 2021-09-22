@@ -41,7 +41,7 @@ the remotes package.
 
 An html version of the drought statistics package can be generated for a
 specific natural resource management region in BC using either
-drought_stats_wc() or drought_stats_to(). If you don't specify where to save the RMarkdown file, a copy will be saved in the /inst/ folder of the installed package.
+render_function_wc() or render_function_to().
 
 
     library(bcdroughtstatistics)
@@ -58,7 +58,7 @@ drought_stats_wc() or drought_stats_to(). If you don't specify where to save the
 
     ## Get the Drought Statistics page for the West Coast without saving
 
-    drought_stats_wc(basin = "West Coast Natural Resource Region", save = FALSE)
+    render_function_wc(basin = "West Coast Natural Resource Region")
 
 ### Project Status
 
