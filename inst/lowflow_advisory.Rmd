@@ -52,7 +52,7 @@ bc_stns <- hy_stations() %>%
   tidyhydat::pull_station_number()
 
 # Get drought statistics for all active stations in BC
-table_stats <- bcdroughtstatistics::drought_statistics(bc_stns) 
+table_stats <- bcdroughtstatistics::drought_statistics(stations = bc_stns) 
 
 # add in the demarcation of drought levels according to the current system
 drought_thresh <- c(
