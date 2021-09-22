@@ -19,7 +19,7 @@
 #' @export
 #' @examples
 #' @return The function returns a html version of the drought product
-drought_stats_wc <- function(basin, save_loc = '') {
+render_function_wc <- function(basin, save_loc = '') {
 
   rmarkdown::render(paste0("inst/regional_streamflow_html.Rmd"),
                     params = list(region = basin),
