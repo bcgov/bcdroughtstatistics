@@ -73,7 +73,7 @@ the html product will be saved.
                 "Thompson-Okanagan Natural Resource Region",
                 "West Coast Natural Resource Region")
 
-    ## Get the Drought Statistics page for the West Coast without saving
+    ## Get the Drought Statistics page for the West Coast, saving to current working directory
 
     render_function_wc(basin = "West Coast Natural Resource Region")
 
