@@ -30,7 +30,8 @@ Imports:
     tidyhydat,
     esri2sf,
     tidyhydat.ws,
-    rlang
+    rlang,
+    drat
 Suggests: 
     ggspatial,
     ggrepel,
@@ -39,7 +40,7 @@ Suggests:
     ggsn
 Remotes:
     yonghah/esri2sf,
-    https://bcgov.github.io/drat/tidyhydat.ws
+    bcgov/tidyhydat.ws
 VignetteBuilder: knitr
 URL: https://github.com/bcgov/bcdroughtstatistics
 BugReports: https://github.com/bcgov/bcdroughtstatistics/issues
