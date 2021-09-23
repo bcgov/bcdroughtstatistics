@@ -18,10 +18,12 @@ Advisory’ RMarkdown product that shows which streams across the entire
 province are low, and thus experiencing moderate to severe hydrologic
 drought impacts.
 
-The BC River Forecast Centre uses bcdroughtstatistics() to produce
-drought statistics products for all natural resource management regions
-on a daily basis during the summer months; an example of the West Coast
-drought statistics format can be found
+The [BC River Forecast
+Centre](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/drought-flooding-dikes-dams/river-forecast-centre)
+uses bcdroughtstatistics() to produce drought statistics products for
+all natural resource management regions on a daily basis during the
+summer months; an example of the West Coast drought statistics format
+can be found
 [here](http://bcrfc.env.gov.bc.ca/Real-time_Data/Drought_regional_statistics/WestCoastNaturalResourceRegion.html).
 
 Note that this package takes real-time streamflow and stream temperature
