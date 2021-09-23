@@ -38,7 +38,7 @@ Suggests:
     shadowtext,
     ggsn
 Remotes:
-    yonghah/esri2sf
+    yonghah/esri2sf,
     drat/tidyhydat.ws
 VignetteBuilder: knitr
 URL: https://github.com/bcgov/bcdroughtstatistics
