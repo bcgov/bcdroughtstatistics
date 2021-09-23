@@ -38,9 +38,9 @@ Suggests:
     magick,
     shadowtext,
     ggsn
+Additional_repositories: https://bcgov.github.io/drat
 Remotes:
-    yonghah/esri2sf,
-    tidyhydat.ws
+    yonghah/esri2sf
 VignetteBuilder: knitr
 URL: https://github.com/bcgov/bcdroughtstatistics
 BugReports: https://github.com/bcgov/bcdroughtstatistics/issues
