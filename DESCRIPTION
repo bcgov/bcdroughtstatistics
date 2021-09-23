@@ -39,7 +39,7 @@ Suggests:
     ggsn
 Remotes:
     yonghah/esri2sf,
-    tidyhydat.ws
+    https://bcgov.github.io/drat/tidyhydat.ws
 VignetteBuilder: knitr
 URL: https://github.com/bcgov/bcdroughtstatistics
 BugReports: https://github.com/bcgov/bcdroughtstatistics/issues
