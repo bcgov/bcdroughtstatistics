@@ -6,7 +6,6 @@ output:
     df_print: paged
     toc_float: true
     toc-title: Quick Links
-    in_header: 
 params:
   region:
     value: NA
