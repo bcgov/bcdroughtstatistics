@@ -38,6 +38,6 @@ render_function_TO <- function(basin, save_loc = "directory") {
 
   rmarkdown::render(paste0("inst/TO_droughtstats_html.Rmd"),
                     params = list(region = basin),
-                    output_file = paste0(save_loc, gsub(" ", "", basin)  ,  ".html"))
+                    output_file = paste0(save_loc_f, gsub(" ", "", basin)  ,  ".html"))
 
 }
