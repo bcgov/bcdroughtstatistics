@@ -35,7 +35,7 @@ header-includes:
 <script>
    $(document).ready(function() {
      $head = $('#header');
-     $head.prepend('<img src=\"C:/Users/AJOLLYMO/RProjects/bcdroughtstatistics/data/BCID_V_rgb_pos.png\" style=\"float: right;width: 150px;\"/>')
+     $head.prepend('<img src="../inst/extdata/BCID_V_rgb_pos.jpg" style=\"float: right;width: 150px;\"/>')
    });
 </script>
 ---
