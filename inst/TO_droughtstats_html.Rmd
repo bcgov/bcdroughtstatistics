@@ -35,7 +35,7 @@ header-includes:
 <script>
    $(document).ready(function() {
      $head = $('#header');
-     $head.prepend('<img src=\"C:/Users/AJOLLYMO/RProjects/bcdroughtstatistics/data/BCID_V_rgb_pos.png\" style=\"float: right;width: 150px;\"/>')
+     $head.prepend('<img src="../inst/extdata/BCID_V_rgb_pos.jpg" style=\"float: right;width: 150px;\"/>')
    });
 </script>
 ---
@@ -232,6 +232,15 @@ drought_thresh <- c(
     "Much above normal (>90th Percentile)", "Highest Recorded"
   )
 
+drought_levels <- c("Not ranked",
+                    "Drought Level 5",
+                    "Drought Level 4",
+                    "Drought Level 3",
+                    "Drought Level 2",
+                    "Drought Level 1",
+                    "Drought Level 0"
+                    )
+
 table_stats_new <- table_out %>%
   dplyr::mutate(per_q7 = round(as.numeric(`Percentile - Q7`), digits = 0)) %>%
   dplyr::mutate(q7_per_thresh = case_when(
@@ -262,6 +271,18 @@ table_stats_new <- table_out %>%
       per_24h > 75 & per_24h <= 90 ~ drought_thresh[9],
       per_24h > 90 & per_24h < 99 ~ drought_thresh[10],
       per_24h > 99  ~ drought_thresh[11],
+    )) %>%
+  # add in the drought levels
+  dplyr::mutate(drought_levels = case_when(
+      is.na(per_q7) ~ drought_levels[1],
+      # NEW SYSTEM *****
+      per_q7 <= 1 ~ drought_levels[2],
+      per_q7 > 1 & per_q7 <= 2 ~ drought_levels[2],
+      per_q7 > 2 & per_q7 <= 5 ~ drought_levels[3],
+      per_q7 > 5 & per_q7 <= 10 ~ drought_levels[4],
+      per_q7 > 10 & per_q7 <= 20 ~ drought_levels[5],
+      per_q7 > 20 & per_q7 <= 30 ~ drought_levels[6],
+      per_q7 > 30 ~ drought_levels[7]
     )) %>%
     dplyr::mutate(`Percentile - Last 24 Hour Q` = round(`Percentile - Last 24 Hour Q`, digits = 0),
                 `Percentile - Q7` = round(`Percentile - Q7`, digits = 0),
@@ -598,7 +619,7 @@ if (params$table_format == "html") {
                    color = "black", opacity = 0.7, weight = 1.5,
                    popup = paste0(interactive_data_20_MAD$`Station.Name`,", ", interactive_data_20_MAD$`ID`, "<br>",
                             "% MAD = ", round(interactive_data_20_MAD$X..MAD, digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data_20_MAD$MAD_bin, "<br>",
+                            "% MAD Category: ", interactive_data_20_MAD$MAD_bin, "<br>",
                             "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_20_MAD$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data_20_MAD$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data_20_MAD$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
@@ -613,7 +634,7 @@ if (params$table_format == "html") {
                    color = "black", opacity = 0.7, weight = 1.5,
                    popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
                             "% MAD (from 24 hour Q) = ", round(interactive_data$X..MAD_Q_24hours, digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data$MAD_bin_q24, "<br>",
+                            "% MAD Category: ", interactive_data$MAD_bin_q24, "<br>",
                             "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
@@ -970,12 +991,12 @@ Data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ```{r statstable}
 
-table_all <- as.data.frame(table_stats_new) %>%
+table_all <- table_stats_new %>%
   dplyr::select(-LATITUDE, -LONGITUDE) %>%
-  dplyr::rename(`Percentile Category - Last 24 Hour Discharge` = pct_bin_24hours, 
-                `Percentile Category - 7 Day Discharge` = pct_bin_7day,
-                `MAD (m^3^/s)` = `MAD (m^3/s)`,
-                `Basin Area (km^2^)` = `Basin Area (km2)`,
+  dplyr::rename(`Percentile Category - Last 24 Hour Discharge` = "q24_per_thresh", 
+                `Percentile Category - 7 Day Discharge` = "q7_per_thresh",
+                `MAD (m^3^/s)` = `MAD (m^3/s)`) %>%
+  dplyr::rename(`Basin Area (km^2^)` = `Basin Area (km2)`,
                 `Latest 7 Day Discharge (m^3^/s)`= `Latest 7 Day Q (m3/s)`,
                 `Last 24 hour Discharge (m^3^/s)` = `Last 24 hour Q (m3/s)`,
                 `Percent of Daily Mean 7 Day Discharge (%; Historic Mean 7 Day Discharge in m^3^/s)` = `Percent of Daily Mean Q7 (%; Historic Mean Q7 in m3/s)`,
@@ -983,37 +1004,63 @@ table_all <- as.data.frame(table_stats_new) %>%
                 `Historic Min 7 Day Discharge (m^3^/s)` = `Historic Min 7 Day Q (m3/s)`,
                 `MAD Category` = MAD_bin,
                 `Percentile - 7 Day Discharge` = `Percentile - Q7`,
-                `Percentile - Last 24 Hour Discharge` = `Percentile - Last 24 Hour Q`
-                ) %>%
-  dplyr::arrange(`Percentile - Last 24 Hour Discharge`, `Percentile - 7 Day Discharge`) %>%
+                `Percentile - Last 24 Hour Discharge` = `Percentile - Last 24 Hour Q`,
+                `Drought Level` = drought_levels) %>%
+  dplyr::arrange( `Percentile - 7 Day Discharge`, `Percentile - Last 24 Hour Discharge`) %>%
   dplyr::rename(`Mean Max Daily Temp (last 7 days; deg C)` = `Mean max temp from last 7 days (degC)`) %>%
-  dplyr::select(-MAD_bin_q24, -per_q7, -q7_per_thresh, -per_24h, -q24_per_thresh) %>%
-  dplyr::rename(`% MAD (24 hour Q)` = `% MAD_Q_24hours`)
+  dplyr::select(-MAD_bin_q24, -per_q7, -per_24h, -pct_bin_24hours, -pct_bin_7day) %>%
+  dplyr::rename(`% MAD (24 hour Q)` = `% MAD_Q_24hours`) %>%
+  dplyr::select(`Station Name`, `ID`, `Record Length`, `Basin Area (km^2^)`, `Regulation Status`,
+                `Last 24 hour Discharge (m^3^/s)`, `Percentile - Last 24 Hour Discharge`, `Percentile Category - Last 24 Hour Discharge`,
+                `Latest 7 Day Discharge (m^3^/s)`, `Percentile - 7 Day Discharge`, `Percentile Category - 7 Day Discharge`,
+                `Percent of Daily Mean 7 Day Discharge (%; Historic Mean 7 Day Discharge in m^3^/s)`,
+                `Percent of Daily Median 7 Day Discharge  (%; Historic Median 7 Day Discharge  in m^3^/s)`,
+                `Historic Min 7 Day Discharge (m^3^/s)`, 
+                `MAD (m^3^/s)`, `% MAD`, `MAD Category`, `% MAD (24 hour Q)`, 
+                `Mean Max Daily Temp (last 7 days; deg C)`, `Max temp over last 24 hours (degC)`, 
+                `Min temp over last 24 hours (degC)`, `Mean temp over last 24 hours (degC)`, `Dates above 23 degC in last 7 days`, `Dates above 20 degC in last 7 days`,
+                `Date`, `Drought Level`
+                )
   
 # Render table
 if (params$table_format == "html"){
   table_all %>%
     dplyr::select(-Date) %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
+    # Colours of percentiles
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000"))))))))) %>%
+                                            color = ifelse(`Percentile Category - Last 24 Hour Discharge`  == drought_thresh[2], naww_pal[2],
+                                                     ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[3], naww_pal[3] ,
+                                                      ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[4], naww_pal[4], 
+                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[5] , naww_pal[5], 
+                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[6] , naww_pal[6], 
+                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[7] , naww_pal[7],
+                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[8] , naww_pal[8],
+                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[9] , naww_pal[9],
+                                                            ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[10] , naww_pal[10],
+                                                             ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[11] , naww_pal[11],
+                                                                                              "#000000")))))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
-                                                           ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#000000",
-                                                            ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
-                                                              ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000")))))))))) %>%
+                                            color = ifelse(`Percentile Category - 7 Day Discharge`  == drought_thresh[2], naww_pal[2],
+                                                     ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[3], naww_pal[3] ,
+                                                      ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[4], naww_pal[4], 
+                                                       ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[5] , naww_pal[5], 
+                                                        ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[6] , naww_pal[6], 
+                                                         ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[7] , naww_pal[7],
+                                                          ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[8] , naww_pal[8],
+                                                           ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[9] , naww_pal[9],
+                                                            ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[10] , naww_pal[10],
+                                                             ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[11] , naww_pal[11],
+                                                                                              "#000000")))))))))))) %>%
+    # Drought levels colours
+     dplyr::mutate(`Drought Level` = cell_spec(`Drought Level`, "html",
+                                            color = ifelse(`Drought Level`  == drought_levels[2], naww_pal[3],
+                                                     ifelse(`Drought Level`  == drought_levels[3], naww_pal[4],
+                                                      ifelse(`Drought Level`  == drought_levels[4], naww_pal[5],
+                                                       ifelse(`Drought Level`  == drought_levels[5], naww_pal[6], 
+                                                        ifelse(`Drought Level`  == drought_levels[6], naww_pal[7],
+                                                         ifelse(`Drought Level`  == drought_levels[7], naww_pal[8], 
+                                                                "#000000")))))))) %>%
     dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
                                     color = ifelse(is.na(`% MAD`), "#000000",
                                         ifelse(`% MAD`  <= 5, "#F90010",
@@ -1032,7 +1079,8 @@ if (params$table_format == "html"){
           row.names = FALSE) %>%
           #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
-    column_spec(20, width = "3cm")
+    column_spec(20, width = "3cm") 
+    
 }
   
 ```
