@@ -8,7 +8,7 @@ output:
     toc-title: Quick Links
 params:
   region:
-    value: "West Coast Natural Resource Region"
+    value: NA
   date:
     value: !r Sys.Date()
   table_format:
