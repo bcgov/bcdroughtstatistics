@@ -1,5 +1,5 @@
-#' Function for downloading the correct BC government logo for superimposing on the snow basin index map
-#' @keywords Download BC governemnt logo
+#' @description Function for downloading the correct BC government logo for superimposing on the snow basin index map
+#' @keywords internal
 #' @export
 #' @examples
 #' download_bc_logo()
