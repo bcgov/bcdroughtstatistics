@@ -11,9 +11,9 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
-#' Function for getting stream and lake temperatures from the WS sites
+#' @description Function for getting stream and lake temperatures from the WS sites
 #' @param station_wt Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords drought
+#' @keywords internal
 #' @export
 #' @examples
 #' @return Returns the temperature data for sites retrieved from tidyhydat.ws
