@@ -13,6 +13,10 @@ basins <- c("Cariboo Natural Resource Region",
 
 q_drive <- "Q:/Real-time_Data/Drought_regional_statistics/"
 
+# BELOW IS FOR SERVER
+#save_loc <- "\\\\question.bcgov\\envwwwt\\rfc/Real-time_Data/Drought_regional_statistics/"
+#R_drive <- "\\\\answer.bcgov\\envwww\\rfc/Real-time_Data/Drought_regional_statistics/"
+
 # save files using render_function
 bcdroughtstatistics::render_function_wc(basins[8], save_loc = q_drive)
 bcdroughtstatistics::render_function_bc(basins[1], save_loc = q_drive)
