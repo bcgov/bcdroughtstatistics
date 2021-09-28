@@ -54,8 +54,14 @@ the remotes package.
 #### Example
 
 An html version of the drought statistics package can be generated for a
-specific natural resource management region in BC using either
-render_function_wc() or render_function_to(). If you don’t specify where
+specific natural resource management region in BC. There are three
+versions of the drought statistics product: 1) a generic version for any
+resource management region (render_function_bc() function), 2) a version
+developed for the West Coast Natural Resource Region
+(render_function_wc()), and 3) a version developed for the
+Thompson-Okanagan Natural Resource Region (render_function_to()
+function). The three version differ slightly in style, specifically
+around how drought statistics are visualized. If you don’t specify where
 to save the RMarkdown file, then the code will automatically create a
 new folder in your working directory named “rmarkdown_files” into which
 the html product will be saved.
