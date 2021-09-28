@@ -12,12 +12,12 @@
 # =====================
 
 
-#' Function for calculating the percentile from tidyhydat extracted data. Limited to current day calculation. Only calculates percentiles if there is at least 5 years of historic data. Made Aug 2020 by Ashlee Jollymore
+#' @description Function for calculating the percentile from tidyhydat extracted data. Limited to current day calculation. Only calculates percentiles if there is at least 5 years of historic data. Made Aug 2020 by Ashlee Jollymore
 #' @param historical_flow historical flow data from hydat database
 #' @param realtime_data realtime data (from last 30 days)
 #' @param expected percentile bins
 #' @param number_of_years number of years of data
-#' @keywords percentiles
+#' @keywords internal
 #' @importFrom magrittr %>%
 #' @export
 #' @examples
