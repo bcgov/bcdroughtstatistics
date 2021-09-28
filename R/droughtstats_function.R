@@ -11,9 +11,9 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
-#' Function for assembling drought statistics and data directly from tidyhydat. Initially developed Aug 2020 by Ashlee Jollymore
+#' @description Function for assembling drought statistics and data directly from tidyhydat. Initially developed Aug 2020 by Ashlee Jollymore
 #' @param stations A list of stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords drought
+#' @keywords internal
 #' @importFrom utils data
 #' @importFrom stats median
 #' @importFrom methods as
