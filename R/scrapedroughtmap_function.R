@@ -1,6 +1,6 @@
 
-#' Function for scraping drought polygons and levels from BC Drought Portal
-#' @keywords drought levels and map
+#' @description Function for scraping drought polygons and levels from BC Drought Portal
+#' @keywords internal
 #' @export
 #' @examples
 #' @importFrom esri2sf esri2sf
