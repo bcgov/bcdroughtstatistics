@@ -1027,44 +1027,47 @@ if (params$table_format == "html"){
   table_all %>%
     dplyr::select(-Date) %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
-    # Colours of percentiles
+     # Colours of percentiles
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(`Percentile Category - Last 24 Hour Discharge`  == drought_thresh[2], naww_pal[2],
-                                                     ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[3], naww_pal[3] ,
-                                                      ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[4], naww_pal[4], 
-                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[5] , naww_pal[5], 
-                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[6] , naww_pal[6], 
-                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[7] , naww_pal[7],
-                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[8] , naww_pal[8],
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[9] , naww_pal[9],
-                                                            ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[10] , naww_pal[10],
-                                                             ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[11] , naww_pal[11],
-                                                                                              "#000000")))))))))))) %>%
+                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
+                                                     ifelse(`Percentile Category - Last 24 Hour Discharge`  == drought_thresh[2], naww_pal[2],
+                                                      ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[3], naww_pal[3] ,
+                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[4], naww_pal[4], 
+                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[5], naww_pal[5], 
+                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[6], naww_pal[6], 
+                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[7], naww_pal[7],
+                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[8], naww_pal[8],
+                                                            ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[9], naww_pal[9],
+                                                             ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[10], naww_pal[10],
+                                                              ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[11], naww_pal[11],
+                                                                                              "#000000"))))))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(`Percentile Category - 7 Day Discharge`  == drought_thresh[2], naww_pal[2],
+                                            color = ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#000000", 
+                                                 ifelse(`Percentile Category - 7 Day Discharge`  == drought_thresh[2], naww_pal[2],
                                                      ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[3], naww_pal[3] ,
                                                       ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[4], naww_pal[4], 
-                                                       ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[5] , naww_pal[5], 
-                                                        ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[6] , naww_pal[6], 
-                                                         ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[7] , naww_pal[7],
-                                                          ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[8] , naww_pal[8],
-                                                           ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[9] , naww_pal[9],
-                                                            ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[10] , naww_pal[10],
-                                                             ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[11] , naww_pal[11],
-                                                                                              "#000000")))))))))))) %>%
+                                                       ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[5], naww_pal[5], 
+                                                        ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[6], naww_pal[6], 
+                                                         ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[7], naww_pal[7],
+                                                          ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[8], naww_pal[8],
+                                                           ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[9], naww_pal[9],
+                                                            ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[10], naww_pal[10],
+                                                             ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[11], naww_pal[11],
+                                                                                              "#000000"))))))))))))) %>%
     # Drought levels colours
      dplyr::mutate(`Drought Level` = cell_spec(`Drought Level`, "html",
-                                            color = ifelse(`Drought Level`  == drought_levels[2], naww_pal[3],
+                                            color = ifelse(is.na(`Drought Level`), "#000000", 
+                                              ifelse(`Drought Level`  == drought_levels[2], naww_pal[3],
                                                      ifelse(`Drought Level`  == drought_levels[3], naww_pal[4],
                                                       ifelse(`Drought Level`  == drought_levels[4], naww_pal[5],
                                                        ifelse(`Drought Level`  == drought_levels[5], naww_pal[6], 
                                                         ifelse(`Drought Level`  == drought_levels[6], naww_pal[7],
                                                          ifelse(`Drought Level`  == drought_levels[7], naww_pal[8], 
-                                                                "#000000")))))))) %>%
+                                                                "#000000"))))))))) %>%
     dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
                                     color = ifelse(is.na(`% MAD`), "#000000",
-                                        ifelse(`% MAD`  <= 5, "#F90010",
-                                                           ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
+                                              ifelse(`% MAD`  <= 5, "#F90010",
+                                                ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
                                                                      color = ifelse(is.na(`Mean Max Daily Temp (last 7 days; deg C)`), "#000000",
                                                                        ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#F90010", "#0003F6")))) %>%
