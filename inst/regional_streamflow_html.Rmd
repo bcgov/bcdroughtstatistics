@@ -941,7 +941,7 @@ if (params$table_format == "html"){
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
                                             color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
                                                            ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                              ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
                                                                   ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
                                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
                                                                                 ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
@@ -950,8 +950,8 @@ if (params$table_format == "html"){
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
                                             color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
                                                            ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#000000",
-                                                            ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
-                                                              ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                             ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
+                                                               ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
                                                                   ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
                                                                          ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
                                                                                 ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
@@ -959,8 +959,8 @@ if (params$table_format == "html"){
                                                                                               "#000000")))))))))) %>%
     dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
                                     color = ifelse(is.na(`% MAD`), "#000000",
-                                        ifelse(`% MAD`  <= 5, "#F90010",
-                                                           ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
+                                             ifelse(`% MAD`  <= 5, "#F90010",
+                                              ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
                                                                      color = ifelse(is.na(`Mean Max Daily Temp (last 7 days; deg C)`), "#000000",
                                                                        ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#F90010", "#0003F6")))) %>%
