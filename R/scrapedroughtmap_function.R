@@ -11,8 +11,8 @@ scrape_drought_map <- function() {
   drought <- esri2sf::esri2sf(url, where = "DroughtLevel >= 0", outFields = c("DroughtLevel"), geomType = "esriGeometryPolygon") %>%
     dplyr::rename(geometry = "geoms") %>%
     as("Spatial") %>%
-    sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
-    sp::spTransform(CRS("+init=epsg:4326"))
+    sp::spTransform(sp::CRS("+proj=longlat +datum=WGS84")) %>%
+    sp::spTransform(sp::CRS("+init=epsg:4326"))
 
   # -------------------------------
   # GET CENTROID OF DROUGHT BASIN POLYGONS
