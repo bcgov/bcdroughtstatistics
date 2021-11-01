@@ -27,10 +27,12 @@ can be found
 [here](http://bcrfc.env.gov.bc.ca/Real-time_Data/Drought_regional_statistics/WestCoastNaturalResourceRegion.html).
 
 Note that this package takes real-time streamflow and stream temperature
-data from the Water Survey of Canada. Thus, users need to obtain a token
-from the Water Survey of Canada that must be stored within a .REnviron
-file separate from this package in order to access its full
-functionality.
+data from the Water Survey of Canada’s webservice. Thus, users need to
+obtain a username and password from the Water Survey of Canada that must
+be stored within a .REnviron file separate from this package in order to
+access its full functionality. Please
+[email](mailto:Ashlee.Jollymore@gov.bc.ca) for more information, or to
+obtain a user name and password.
 
 ### Features
 
