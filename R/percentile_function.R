@@ -30,9 +30,11 @@ calc_percentiles <- function(historical_flow, realtime_data, expected, number_of
     tidyr::nest() %>%
     dplyr::left_join(realtime_data, by = c("STATION_NUMBER")) %>%
     dplyr::left_join(number_of_years, by = c("STATION_NUMBER")) %>%
-    dplyr::mutate(prctile = ifelse(!is.na(Value),
-      ifelse(RECORD_LENGTH > 5, purrr::map2_dbl(data, Value, ~ ecdf(.x$Value)(.y)), NA), NA
-    )) %>%
+    dplyr::mutate(prctile = ifelse(!is.na(Value), # if there is no data for today
+                              ifelse(RECORD_LENGTH > 5, # if there is less than 5 years of data
+                                ifelse(all(!is.na(data[[1]]$Value)), # if there is no data for today in historic record
+                                       purrr::map2_dbl(data, Value, ~ ecdf(.x$Value)(.y)), NA), NA), NA)
+    ) %>%
     dplyr::left_join(allstations, by = c("STATION_NUMBER")) %>%
     dplyr::mutate(pct_bin = case_when(
       is.na(prctile) ~ "Not ranked",
