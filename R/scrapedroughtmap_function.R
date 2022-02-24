@@ -18,7 +18,7 @@ scrape_drought_map <- function() {
   # GET CENTROID OF DROUGHT BASIN POLYGONS
   # -------------------------------
 
-  st_drought <- st_as_sf(drought, 4326) %>%
+  st_drought <- sf::st_as_sf(drought, 4326) %>%
     dplyr::mutate(
       CENTROID = purrr::map(geometry, sf::st_centroid),
       COORDS = purrr::map(CENTROID, sf::st_coordinates),
