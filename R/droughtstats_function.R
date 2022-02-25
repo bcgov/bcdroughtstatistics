@@ -151,8 +151,8 @@ drought_statistics <- function(stations) {
       dplyr::select(STATION_NUMBER, regulation)) %>%
     ## Add in % median and mean flow
     dplyr::full_join(hist_flow_7day_mean %>%
-      dplyr::mutate(day_month = paste0(day(Date), "-", month(Date))) %>%
-      dplyr::filter(day_month == paste0(day(Sys.Date()), "-", month(Sys.Date()))) %>%
+      dplyr::mutate(day_month = paste0(lubridate::day(Date), "-", lubridate::month(Date))) %>%
+      dplyr::filter(day_month == paste0(lubridate::day(Sys.Date()), "-", lubridate::month(Sys.Date()))) %>%
       dplyr::group_by(STATION_NUMBER) %>%
       dplyr::summarize(
         mean_Q7_forthisdate = round(mean(Q_7day, na.rm = TRUE), digits = 2),
@@ -182,8 +182,8 @@ drought_statistics <- function(stations) {
       dplyr::rename(Q7_value = Q_7day, Q7_prctile = `%tile-7day_mean`))) %>%
     # Add in the Q min 7 day value for today's date
     dplyr::full_join(hist_flow_7day_mean %>%
-      dplyr::mutate(day_month = paste0(day(Date), "-", month(Date))) %>%
-      dplyr::filter(day_month == paste0(day(Sys.Date()), "-", month(Sys.Date()))) %>%
+      dplyr::mutate(day_month = paste0(lubridate::day(Date), "-", lubridate::month(Date))) %>%
+      dplyr::filter(day_month == paste0(lubridate::day(Sys.Date()), "-", lubridate::month(Sys.Date()))) %>%
       dplyr::group_by(STATION_NUMBER) %>%
       dplyr::summarize(min_Q7 = round(min(Q_7day, na.rm = TRUE), digits = 2))) %>%
     # Add in MAD: only stations with at least 5 years of historic data
