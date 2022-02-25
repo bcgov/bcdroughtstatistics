@@ -13,7 +13,7 @@
 
 #' @description Function for getting stream and lake temperatures from the WS sites
 #' @param station_wt Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords internal
+#' @keywords
 #' @export
 #' @examples
 #' @return Returns the temperature data for sites retrieved from tidyhydat.ws
