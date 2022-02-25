@@ -23,7 +23,8 @@ water_temp <- function(station_wt) {
   # Add in the temperature
   temp_station_initial <- tidyhydat.ws::realtime_ws(
     station_number = station_wt,
-    token = tidyhydat.ws::token_ws()
+    token = tidyhydat.ws::token_ws(),
+    parameters = 5
   ) %>%
     dplyr::filter(Code == "TW") %>%
     dplyr::filter(Value < 90) # filter for only those values under 90 deg c

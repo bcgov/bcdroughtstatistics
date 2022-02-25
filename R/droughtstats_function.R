@@ -13,7 +13,7 @@
 
 #' @description Function for assembling drought statistics and data directly from tidyhydat. Initially developed Aug 2020 by Ashlee Jollymore
 #' @param stations A list of stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords internal
+#' @keywords
 #' @importFrom utils data
 #' @importFrom stats median
 #' @importFrom methods as
@@ -100,8 +100,7 @@ drought_statistics <- function(stations) {
     historical_flow = hist_flow,
     realtime_data = rl_data_instant %>% dplyr::rename(Value = Q_instant),
     expected,
-    number_of_years = q_stns_yrs
-  ) %>%
+    number_of_years = q_stns_yrs) %>%
     dplyr::rename(Q_instant = Value, prctile_inst = prctile, pct_bin_inst = pct_bin)
 
   ## Calculate 24 hours percentiles
