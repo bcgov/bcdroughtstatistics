@@ -224,7 +224,7 @@ wardpal <- colorFactor(viridis::viridis(7), regions$REGION_NAME)
 centers <- data.frame(rgeos::gCentroid(as(regions, Class = 'Spatial'), byid = TRUE))
 centers$region <- regions$REGION_NAME
 
-basemap <- leaflet() %>%
+basemap <- leaflet(width = "100%") %>%
    addProviderTiles("Esri.WorldTopoMap") %>%
    fitBounds(48, 50, -139, -120) %>%
    setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
