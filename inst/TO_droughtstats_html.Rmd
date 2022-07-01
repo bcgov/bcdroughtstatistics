@@ -97,7 +97,7 @@ if(params$table_format == "html"){
 }
 
 options(knitr.table.format = params$table_format)
-#params$region <- tibble(region = "West Coast Natural Resource Region")
+#params$region <- tibble(region = "Thompson-Okanagan Natural Resource Region")
 
 
 ```
@@ -131,7 +131,7 @@ drought <- bcdroughtstatistics::scrape_drought_map() %>%
   as("Spatial") %>%
   sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
   sp::spTransform(CRS("+init=epsg:4326"))
-  
+
 ### Spatial Cleaning
 
 ## Choose the correct region

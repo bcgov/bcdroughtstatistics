@@ -42,6 +42,19 @@ scrape_drought_map <- function() {
     st_drought$label_m[i] <- paste0("Basin", i + 1)
   }
 
+  leaflet(width = "100%") %>%
+    addProviderTiles("Esri.WorldTopoMap") %>%
+    fitBounds(48, 50, -139, -120) %>%
+    setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
+    addPolygons(data = st_drought,
+                #group = "BC Provincial Drought Polygons",
+                #weight = 3,
+                #color = '#2900b6',
+                #fillColor = '#white', fillOpacity = 0, # completely opaque BC Provincial Drought Polygons for now
+                #highlightOptions = highlightOptions(color = '#00cccc', weight = 3,
+                #bringToFront = FALSE),
+                label = ~st_drought$label_m)
+
   st_drought <- st_drought %>%
     dplyr::mutate(BasinName = ifelse(label_m == "Basin10", "Fort Nelson",
       ifelse(label_m == "Basin11", "Northwest",
@@ -49,32 +62,34 @@ scrape_drought_map <- function() {
           ifelse(label_m == "Basin5", "Finlay",
             ifelse(label_m == "Basin8", "North Peace",
               ifelse(label_m == "Basin12", "East Peace",
-                ifelse(label_m == "Basin29", "Skeena Nass",
-                  ifelse(label_m == "Basin28", "Haida Gwaii",
+                ifelse(label_m == "Basin24", "Skeena Nass",
+                  ifelse(label_m == "Basin23", "Haida Gwaii",
                     ifelse(label_m == "Basin2", "Bulkley-Lakes",
                       ifelse(label_m == "Basin6", "Upper Fraser West",
                         ifelse(label_m == "Basin3", "Parsnip",
                           ifelse(label_m == "Basin9", "South Peace",
                             ifelse(label_m == "Basin4", "Upper Fraser East",
-                              ifelse(label_m == "Basin24", "Central Coast",
-                                ifelse(label_m == "Basin26", "Middle Fraser",
-                                  ifelse(label_m == "Basin27", "North Thompson",
-                                    ifelse(label_m == "Basin25", "Upper Columbia",
-                                      ifelse(label_m == "Basin17", "South Coast",
-                                        ifelse(label_m == "Basin18", "Lower Fraser",
-                                          ifelse(label_m == "Basin30", "Nicola",
-                                            ifelse(label_m == "Basin33", "Coldwater",
-                                              ifelse(label_m == "Basin13", "Skagit",
-                                                ifelse(label_m == "Basin20", "Similkameen",
-                                                  ifelse(label_m == "Basin21", "Okanagan",
-                                                    ifelse(label_m == "Basin32", "Salmon",
-                                                      ifelse(label_m == "Basin31", "South Thompson",
-                                                        ifelse(label_m == "Basin19", "Kettle",
-                                                          ifelse(label_m == "Basin16", "West Kootenay",
-                                                            ifelse(label_m == "Basin14", "East Kootenay",
-                                                              ifelse(label_m == "Basin22", "East Vancouver Island",
-                                                                ifelse(label_m == "Basin23", "West Vancouver Island",
-                                                                  ifelse(label_m == "Basin15", "Lower Columbia",
+                              ifelse(label_m == "Basin20", "Central Coast",
+                                ifelse(label_m == "Basin30", "Middle Fraser",
+                                  ifelse(label_m == "Basin22", "North Thompson",
+                                    ifelse(label_m == "Basin21", "Upper Columbia",
+                                     ifelse(label_m == "Basin14", "Lower Columbia",
+                                      ifelse(label_m == "Basin33", "Central Pacific Range Basin",
+                                        ifelse(label_m == "Basin32", "Eastern Pacific Range Basin",
+                                          ifelse(label_m == "Basin31", "Sunshine Coast Basin",
+                                        ifelse(label_m == "Basin34", "Lower Mainland Basin",
+                                      ifelse(label_m == "Basin17", "Similkameen",
+                                     ifelse(label_m == "Basin28", "Coldwater",
+                                    ifelse(label_m == "Basin25", "Nicola",
+                                 ifelse(label_m == "Basin18", "Okanagan",
+                                ifelse(label_m == "Basin27", "Salmon",
+                               ifelse(label_m == "Basin26", "South Thompson",
+                              ifelse(label_m == "Basin35", "Lower Thompson",
+                          ifelse(label_m == "Basin16", "Kettle",
+                                                          ifelse(label_m == "Basin15", "West Kootenay",
+                                                            ifelse(label_m == "Basin13", "East Kootenay",
+                                                              ifelse(label_m == "Basin29", "East Vancouver Island",
+                                                                ifelse(label_m == "Basin19", "West Vancouver Island",
                                                                     "MISSING***"
                                                                   )
                                                                 )
@@ -106,6 +121,5 @@ scrape_drought_map <- function() {
             )
           )
         )
-      )
-    ))
+      )))))
 }
