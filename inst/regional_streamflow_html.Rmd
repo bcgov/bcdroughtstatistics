@@ -82,6 +82,8 @@ library(bcdroughtstatistics)
 
 ```{r setup, include=FALSE}
 
+#params$region <- tibble(region = "West Coast Natural Resource Region")
+
 ## Knitr options dependent on type of document
 if(params$table_format == "latex"){
   opts_chunk$set(echo = FALSE, 
@@ -98,9 +100,6 @@ if(params$table_format == "html"){
 }
 
 options(knitr.table.format = params$table_format)
-#params$region <- tibble(region = "West Coast Natural Resource Region")
-
-
 ```
 
 
