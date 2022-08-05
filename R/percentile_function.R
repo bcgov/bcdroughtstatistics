@@ -26,6 +26,7 @@
 calc_percentiles <- function(historical_flow, realtime_data, expected, number_of_years) {
   df <- historical_flow %>%
     dplyr::filter(lubridate::yday(.data$Date) == lubridate::yday(Sys.Date())) %>%
+    dplyr::filter(!is.na(Value)) %>%
     dplyr::group_by(.data$STATION_NUMBER) %>%
     tidyr::nest() %>%
     dplyr::left_join(realtime_data, by = c("STATION_NUMBER")) %>%
