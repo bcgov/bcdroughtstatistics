@@ -187,7 +187,7 @@ basemap <- leaflet(width = "100%") %>%
               label = ~spdf_select@data$BasinName,
               popup = paste0("Drought Level = ", spdf_select@data$DroughtLevel), 
               options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
-   addPolygons(data = region_watershed_interactive,
+   addPolygons(data = st_nr_regions_sub,
               group = "polygons",
               weight = 3,
               color = 'black',
