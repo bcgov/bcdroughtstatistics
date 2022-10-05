@@ -17,4 +17,7 @@ The function returns a html version of the drought product
 \description{
 Function for rendering the West Coast RMarkdown product
 }
+\examples{
+\dontrun{}
+}
 \keyword{drought}
