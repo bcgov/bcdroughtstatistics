@@ -11,15 +11,16 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
+#' calculate all drought relevant statistics for stations
 #' @description Function for assembling drought statistics and data directly from tidyhydat. Initially developed Aug 2020 by Ashlee Jollymore
 #' @param stations A list of stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords
+#' @keywords drought stats
 #' @importFrom utils data
 #' @importFrom stats median
 #' @importFrom methods as
 #' @importFrom rlang .data
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @return The function returns a dataframe of statistics for the list of stations provided
 drought_statistics <- function(stations) {
 
