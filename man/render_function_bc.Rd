@@ -17,4 +17,7 @@ The function returns a html version of the drought product
 \description{
 Function for rendering the Thompson Okanagan version of the RMarkdown drought product
 }
+\examples{
+\dontrun{}
+}
 \keyword{drought}
