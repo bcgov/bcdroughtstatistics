@@ -11,10 +11,11 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
+#' Scrape drought map for drought levels and polygons
 #' @description Function for scraping drought polygons and levels from BC Drought Portal
 #' @keywords internal
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @importFrom esri2sf esri2sf
 #' @return Returns the polygons and drought levels from the current BC Drought Portal
 #' scrape_drought_map()
