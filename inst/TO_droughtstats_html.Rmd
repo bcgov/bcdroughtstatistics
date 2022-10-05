@@ -945,13 +945,13 @@ laketemp <- table_out_temp %>%
                 `Dates above 20 degC in last 7 days`, `Dates above 23 degC in last 7 days`)
 
 
-if (params$table_format == "html"){
+if (params$table_format == "html") {
   laketemp %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
                                                                      color = ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#B31F23", "#000000"))) %>%
     dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
-                                                                     color = ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#000000"))) %>%
+                                                                     color = ifelse(!is.na(`Max temp over last 24 hours (degC)`) & `Max temp over last 24 hours (degC)` >= 23, "#F90010", "#000000"))) %>%
     dplyr::arrange(desc(`Mean Max Daily Temp (last 7 days; deg C)`)) %>%
     kableExtra::kbl(format = "html", 
           digits = 2, 
