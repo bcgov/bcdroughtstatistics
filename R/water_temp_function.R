@@ -11,11 +11,12 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
+#' Get water temperatures from WSC
 #' @description Function for getting stream and lake temperatures from the WS sites
 #' @param station_wt Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
-#' @keywords
+#' @keywords water temperature functions
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @return Returns the temperature data for sites retrieved from tidyhydat.ws
 
 water_temp <- function(station_wt) {
