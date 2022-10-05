@@ -14,10 +14,10 @@
 #' Function for rendering the Thompson Okanagan version of the RMarkdown drought product
 #' @param basin The basin you want to render the drought statistics html page for
 #' @param save_loc The path that you want to save a copy of the html file at. Defaults to ''
-#' @keywords drought
+#' @keywords drought Thompson Okanagan
 #' @importFrom rmarkdown render
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @return The function returns a html version of the drought product
 render_function_to <- function(basin, save_loc = "directory") {
 
