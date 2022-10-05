@@ -11,10 +11,11 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
+#' Download BC Government Logo
 #' @description Function for downloading the correct BC government logo for superimposing on the snow basin index map
 #' @keywords internal
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' download_bc_logo()
 download_bc_logo <- function() {
   file_loc <- file.path("data/BCID_V_rgb_pos.png")
