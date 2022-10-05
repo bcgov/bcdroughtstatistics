@@ -3,7 +3,11 @@
 # This work is licensed under the Creative Commons Attribution 4.0 International License.
 # To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.
 
-# Function to get a new token if process takes too long (for tidyhydat.ws())
+#' Function to get a new token if process takes too long (for tidyhydat.ws())
+#' @description Function to get a new token if process takes too long (for tidyhydat.ws())
+#' @keywords get new token
+#' @export
+#' @examples \dontrun{}
 
 start.time <- Sys.time()
 
