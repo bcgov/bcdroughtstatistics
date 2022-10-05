@@ -35,8 +35,12 @@ drought_statistics <- function(stations) {
     dplyr::filter(.data$DATA_TYPE == "Q") %>%
     dplyr::select(.data$STATION_NUMBER, .data$RECORD_LENGTH)
 
-  # Query realtime data
-  rl_data <- tidyhydat::realtime_dd(station_number = q_stns)
+  # Query realtime data. Trycatch function in case
+  ee <- function (i) {
+    tryCatch(tidyhydat::realtime_dd(i), error = function(e) NULL)
+  }
+
+  rl_data <- do.call(dplyr::bind_rows, lapply(q_stns, ee))
 
   ## Find most recent instantaneous discharge value
   rl_data_instant <- rl_data %>%
