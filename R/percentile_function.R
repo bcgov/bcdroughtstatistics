@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and limitations under the License.
 # =====================
 
-
+#' Calculate percentiles for drought statistics
 #' @description Function for calculating the percentile from tidyhydat extracted data. Limited to current day calculation. Only calculates percentiles if there is at least 5 years of historic data. Made Aug 2020 by Ashlee Jollymore
 #' @param historical_flow historical flow data from hydat database
 #' @param realtime_data realtime data (from last 30 days)
@@ -20,7 +20,7 @@
 #' @keywords internal
 #' @importFrom magrittr %>%
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @return Returns a data frame with percentiles based on historic data
 #' calc_percentiles()
 calc_percentiles <- function(historical_flow, realtime_data, expected, number_of_years) {
