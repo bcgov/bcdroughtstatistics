@@ -17,7 +17,7 @@
 #' @keywords drought
 #' @importFrom rmarkdown render
 #' @export
-#' @examples
+#' @examples \dontrun{}
 #' @return The function returns a html version of the drought product
 render_function_bc <- function(basin, save_loc = "directory") {
 
