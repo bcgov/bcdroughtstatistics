@@ -1,6 +1,6 @@
 # Script for automating the creation of drought updates for all regions
 rm(list=ls())
-library(bcsnowstats)
+library(bcdroughtstatistics)
 
 basins <- c("Cariboo Natural Resource Region",
             "Kootenay-Boundary Natural Resource Region",

@@ -6,3 +6,4 @@
 \vignettes\automate_output_files.R
 \vignettes\automate_output_files_server.R
 app.R
+.Renviron
