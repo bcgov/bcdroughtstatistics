@@ -8,7 +8,7 @@ output:
     toc-title: Quick Links
 params:
   region:
-    value: NA
+    value: "West Coast Natural Resource Region"
   date:
     value: !r Sys.Date()
   table_format:
@@ -468,21 +468,23 @@ if (params$table_format == "html"){
   t_q7 <- much_below_normal_tbl %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
+                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#black",
+                                              ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
                                                            ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
                                                                   ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
                                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
                                                                                 ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
                                                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000")))))))) %>%
+                                                                                              "#000000"))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
+                                            color = ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#black",
+                                              ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
                                                            ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
                                                                   ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
                                                                          ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
                                                                                 ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
                                                                                        ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000")))))))) %>%
+                                                                                              "#000000"))))))))) %>%
     kableExtra::kbl(format = "html", 
           digits = 2, 
           align = rep('c'), 

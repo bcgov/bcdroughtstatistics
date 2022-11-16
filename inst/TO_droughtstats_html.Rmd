@@ -465,7 +465,8 @@ if (params$table_format == "html"){
   t_q7 <- much_below_normal_tbl %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(`Percentile Category - Last 24 Hour Discharge`  == drought_thresh[2], naww_pal[2],
+                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#black",
+                                                  ifelse(`Percentile Category - Last 24 Hour Discharge`  == drought_thresh[2], naww_pal[2],
                                                      ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[3], naww_pal[3] ,
                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[4], naww_pal[4], 
                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[5] , naww_pal[5], 
@@ -475,9 +476,10 @@ if (params$table_format == "html"){
                                                            ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[9] , naww_pal[9],
                                                             ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[10] , naww_pal[10],
                                                              ifelse(`Percentile Category - Last 24 Hour Discharge` == drought_thresh[11] , naww_pal[11],
-                                                                                              "#000000")))))))))))) %>%
+                                                                                              "#000000"))))))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(`Percentile Category - 7 Day Discharge`  == drought_thresh[2], naww_pal[2],
+                                            color = ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#black",
+                                                  ifelse(`Percentile Category - 7 Day Discharge`  == drought_thresh[2], naww_pal[2],
                                                      ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[3], naww_pal[3] ,
                                                       ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[4], naww_pal[4], 
                                                        ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[5] , naww_pal[5], 
@@ -487,7 +489,7 @@ if (params$table_format == "html"){
                                                            ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[9] , naww_pal[9],
                                                             ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[10] , naww_pal[10],
                                                              ifelse(`Percentile Category - 7 Day Discharge` == drought_thresh[11] , naww_pal[11],
-                                                                                              "#000000")))))))))))) %>%
+                                                                                              "#000000"))))))))))))) %>%
     kableExtra::kbl(format = "html", 
           digits = 2, 
           align = rep('c'), 
