@@ -253,7 +253,7 @@ date_annot <- unique(table_out$Date)[!is.na(unique(table_out$Date))]
 ```
 This report contains low streamflow information for the `r params$region`. Please see the [Provincial Drought Portal](https://governmentofbc.maps.arcgis.com/apps/MapSeries/index.html?appid=838d533d8062411c820eef50b08f7ebc) for information about provincial conditions. Data is provided as is and may be unverified and uncorrected. Users assume all responsibility for use and interpretation of data within. 
 
-Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Ashlee.Jollymore@gov.bc.ca); questions regarding interpretation can be sent to [Jaroslaw Szczot, Senior Aquatic Ecologist](mailto:Jaroslaw.Szczot@gov.bc.ca). 
+Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [Jaroslaw Szczot, Senior Aquatic Ecologist](mailto:Jaroslaw.Szczot@gov.bc.ca). 
 
 This report was generated on `r format(Sys.time(), '%d %B %Y, %H:%M %p')`.
 

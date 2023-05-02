@@ -27,7 +27,7 @@ The primary output of this package are RMarkdown products that create tables and
 
 The [BC River Forecast Centre](https://www2.gov.bc.ca/gov/content/environment/air-land-water/water/drought-flooding-dikes-dams/river-forecast-centre) uses bcdroughtstatistics() to produce drought statistics products for all natural resource management regions on a daily basis during the summer months; an example of the West Coast drought statistics format can be found [here](http://bcrfc.env.gov.bc.ca/Real-time_Data/Drought_regional_statistics/WestCoastNaturalResourceRegion.html).
 
-Note that this package takes real-time streamflow and stream temperature data from the Water Survey of Canada's webservice. Thus, users need to obtain a username and password from the Water Survey of Canada that must be stored within a .REnviron file separate from this package in order to access its full functionality. Please [email](mailto:Ashlee.Jollymore@gov.bc.ca) for more information, or to obtain a user name and password. 
+Note that this package takes real-time streamflow and stream temperature data from the Water Survey of Canada's webservice. Thus, users need to obtain a username and password from the Water Survey of Canada that must be stored within a .REnviron file separate from this package in order to access its full functionality. Please [email](mailto:Jon.Goetz@gov.bc.ca) for more information, or to obtain a user name and password. 
 
 ### Features
 This package features three functions that render three variations on the drought statistics product. Two of the functions return drought statistics products tailored for specific regions within British Columbia; the third function returns the Low Flow Advisory product.

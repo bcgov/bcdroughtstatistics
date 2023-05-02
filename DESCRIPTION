@@ -2,10 +2,14 @@ Package: bcdroughtstatistics
 Title: Creates tables of drought relevant statistics by natural resource management area
 Version: 0.0.1.0000
 Authors@R: 
-    c(person(given = "Ashlee",
-             family = "Jollymore",
+    c(person(given = "Jon",
+             family = "Goetz",
              role = c("aut", "cre"),
-             email = "Ashlee.Jollymore@gov.bc.ca"),
+             email = "Jon.Goetz@gov.bc.ca"),
+      person(given = "Ashlee",
+             family = "Jollymore",
+             role = c("aut"),
+             email = "Ashlee.Jollymore@gmail.com"),
       person(given = "Sam",
              family = "Albers",
              role = c("aut"),
@@ -17,7 +21,7 @@ License: Apache License (== 2.0) | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
     knitr,
     rmarkdown,
