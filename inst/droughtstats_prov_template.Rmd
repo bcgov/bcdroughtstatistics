@@ -32,15 +32,21 @@ header-includes:
   - \usepackage{gensymb}
 ---
 
-<script>
-   $(document).ready(function() {
-     $head = $('#header');
-     $head.prepend('<img src="../inst/extdata/BCID_V_rgb_pos.jpg" style=\"float: right;width: 150px;\"/>')
-   });
-</script>
+<!-- <script> -->
+<!--    $(document).ready(function() { -->
+<!--      $head = $('#header'); -->
+<!--      $head.prepend('<img src="../inst/extdata/BCID_V_rgb_pos.jpg" style=\"float: right;width: 150px;\"/>') -->
+<!--    }); -->
+<!-- </script> -->
 ---
 title: "`r paste0(params$region, " Low Streamflow Report")`"
 ---
+
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri(file.path("BCID_V_cmyk_pos_smaller.jpg")),
+               alt = 'logo',
+               style = 'float:right;position: relative; top:0; right:0; padding:0px;')
+```
 
 ```{r packages, include=FALSE}
 library(tidyverse)
