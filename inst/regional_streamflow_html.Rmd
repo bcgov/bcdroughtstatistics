@@ -201,8 +201,8 @@ cities_wc <- cities
 basemap <- leaflet(width = "100%",
                    options = leaflet::leafletOptions(attributionControl = FALSE)) %>%
    addProviderTiles("Esri.WorldTopoMap") %>%
-   fitBounds(48, 50, -139, -120) %>%
-   setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
+   #fitBounds(48, 50, -139, -120) %>%
+   #setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
    addMapPane("polygons", zIndex = 400) %>% # order so the polygons are above the drought monitor. Lower number puts the layer closer to the bottom
    addMapPane("BC Provincial Drought Polygons", zIndex = 405) %>%
    addLayersControl(baseGroups = c("BC Provincial Drought Polygons"),
