@@ -198,7 +198,8 @@ cities_wc <- cities
   #dplyr::filter(NAME %in% cities_regions) if you want to filter for specific cities
 
 # Create basemap for the interactive map - this will allow you to simply add layers to the basemap
-basemap <- leaflet(width = "100%") %>%
+basemap <- leaflet(width = "100%",
+                   options = leaflet::leafletOptions(attributionControl = FALSE)) %>%
    addProviderTiles("Esri.WorldTopoMap") %>%
    fitBounds(48, 50, -139, -120) %>%
    setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
