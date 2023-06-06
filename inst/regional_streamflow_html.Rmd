@@ -30,6 +30,7 @@ header-includes:
   - \newcommand{\blandscape}{\begin{landscape}}
   - \newcommand{\elandscape}{\end{landscape}}
   - \usepackage{gensymb}
+title: "`r paste0(params$region, ' Low Streamflow Report')`"
 ---
 
 <!-- <script> -->
@@ -38,9 +39,9 @@ header-includes:
 <!--      $head.prepend('<img src="../inst/extdata/BCID_V_rgb_pos.jpg" style=\"float: right;width: 150px;\"/>') -->
 <!--    }); -->
 <!-- </script> -->
----
-title: "`r paste0(params$region, " Low Streamflow Report")`"
----
+<!-- --- -->
+<!-- title: "`r paste0(params$region, " Low Streamflow Report")`" -->
+<!-- --- -->
 ```{r, echo=FALSE}
 htmltools::img(src = knitr::image_uri(file.path("BCID_V_cmyk_pos_smaller.jpg")),
                alt = 'logo',
