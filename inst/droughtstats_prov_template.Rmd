@@ -429,7 +429,7 @@ if (params$table_format == "html") {
                    label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, " ", interactive_data$q24_per_thresh),
               options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
      addLegend(colors = naww_pal,
-            labels = drought_thresh,
+            labels = drought_thresh, opacity = 1,
             group = c("Streamflow - Last 24 Hour Percentiles", "Streamflow - Seven Day Percentiles"),
             title = paste0("Streamflow Percentile Colours")) 
                    
@@ -651,7 +651,7 @@ if (params$table_format == "html") {
                    label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD_Q_24hours, digits = 2)),
               options = pathOptions(pane = "All sites - % MAD (24 hour Q)")) %>%
      addLegend(colors = naww_pal_MAD,
-            labels = MAD_levels,
+            labels = MAD_levels, opacity = 1,
             title = paste0("% MAD")) 
                    
 }
@@ -795,7 +795,7 @@ if (params$table_format == "html") {
   naww_pal_temp <- c("#FFFFFF", # Npt ranked
                      "#4575B4", # blue - less than 16
                      "#FEB24C", # orange - 19 to 20
-                     "#FC4E2A", # oarngy - red
+                     "#FC6E2A", # oarngy - red
                      "#B10026") #Dark red > 23
   temp_levels <- c("Not ranked", "<16 degC", "16 to 20", "20 to 23", "> or equal to 23")
   pal_temp <- colorFactor(palette = naww_pal_temp, levels = temp_levels)
@@ -869,7 +869,7 @@ if (params$table_format == "html") {
                                    "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                    options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
      addLegend(colors = naww_pal_temp,
-            labels = temp_levels,
+            labels = temp_levels, opacity = 1,
             title = paste0("7 Day Max Daily Temp")) 
   
   # Add in the circles that show the dates that went above 23 deg C

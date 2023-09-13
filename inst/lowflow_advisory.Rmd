@@ -308,7 +308,7 @@ basemap %>%
                             "<a href=\"", "http://bcrfc.env.gov.bc.ca/Real-time_Data/Interactive_Q_process/InteractivePlots/dailyQ_interactive/", table_10$`ID`, "_dailyQ.html", "\" target='_blank'>Link to Interactive Hydrograph (new tab)</a>"),
                    label = ~paste0(table_10$`Station Name`,", ", table_10$`ID`, " ", table_10$pct_bin_24hours),
               options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
-     addLegend(colors = naww_pal,
+     addLegend(colors = naww_pal, opacity = 1,
             labels = expected,
             title = paste0("7 Day Streamflow Percentile Colours")) 
 ```

@@ -434,7 +434,7 @@ if (params$table_format == "html") {
                    label = ~paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, " ", interactive_data$pct_bin_24hours),
               options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
      addLegend(colors = naww_pal,
-            labels = expected,
+            labels = expected, opacity = 1,
             title = paste0("7 Day Streamflow Percentile Colours")) 
                    
 }
@@ -633,7 +633,7 @@ if (params$table_format == "html") {
                    label = ~paste0(interactive_data_10$`Station.Name`,", ", interactive_data_10$`ID`, "; % MAD = ", round(interactive_data_10$X..MAD, digits = 2)),
               options = pathOptions(pane = "Sites with % MAD < 10%")) %>%
      addLegend(colors = naww_pal_MAD,
-            labels = MAD_levels,
+            labels = MAD_levels, opacity = 1,
             title = paste0("% MAD")) 
                    
 }
@@ -756,7 +756,7 @@ if (params$table_format == "html") {
   naww_pal_temp <- c("#FFFFFF", # Npt ranked
                      "#4575B4", # blue - less than 16
                      "#FEB24C", # orange - 19 to 20
-                     "#FC4E2A", # oarngy - red
+                     "#FC6E2A", # oarngy - red
                      "#B10026") #Dark red > 23
   temp_levels <- c("Not ranked", "<16 degC", "16 to 20", "20 to 23", "> or equal to 23")
   pal_temp <- colorFactor(palette = naww_pal_temp, levels = temp_levels)
@@ -830,7 +830,7 @@ if (params$table_format == "html") {
                                    "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                    options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
      addLegend(colors = naww_pal_temp,
-            labels = temp_levels,
+            labels = temp_levels, opacity = 1,
             title = paste0("7 Day Max Daily Temp")) 
   
   # Add in the circles that show the dates that went above 23 deg C
