@@ -141,6 +141,20 @@ drought <- bcdroughtstatistics::scrape_drought_map() %>%
   sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
   sp::spTransform(CRS("+init=epsg:4326"))
 
+drought_sf <- suppressWarnings(
+  suppressMessages(
+    esri2sf::esri2sf("https://services6.arcgis.com/ubm4tcTYICKBpist/ArcGIS/rest/services/British_Columbia_Drought_Levels_View/FeatureServer/1", where = "DroughtLevel >= 0", geomType = "esriGeometryPolygon") %>%
+      dplyr::rename(geometry = "geoms") %>%
+      as("Spatial") %>%
+      sp::spTransform(sp::CRS("+proj=longlat +datum=WGS84")) %>%
+      sp::spTransform(sp::CRS("+init=epsg:4326")) %>%
+      sf::st_as_sf()
+  )) %>% 
+  mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin="1970-01-01"),
+         DroughtLevel = gsub("Drought Level ","",DroughtLevel)) %>% 
+  filter(BasinName %in% c("Similkameen","Okanagan","North Thompson","South Thompson","Salmon River",
+                          "Coldwater River","Lower Thompson","Nicola"))
+
 ### Spatial Cleaning
 
 ## Choose the correct region
@@ -154,7 +168,7 @@ st_nr_regions_sub <- nr_regions_sub %>%
 st_spdf <- st_make_valid(st_as_sf(drought, 4326)) %>%
   st_transform(4326)
 
-spdf_select <- st_intersection(st_spdf, st_nr_regions_sub) %>%
+spdf_select <- st_intersection(st_spdf, drought_sf) %>%
   as("Spatial") %>%
   sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
   sp::spTransform(CRS("+init=epsg:4326"))
@@ -173,7 +187,8 @@ region_watershed <- st_intersection(select(nr_regions_sub, geometry), wsc_draina
 
 region_watershed_interactive <- st_transform(region_watershed, CRS("+init=epsg:4326")) # transform to Google Mercator projection
 
-stns_region <- sf::st_join(stns_sf, nr_regions_sub, left = FALSE) 
+stns_region <- sf::st_join(stns_sf %>%
+                             st_transform(4326), drought_sf, left = FALSE) 
 
 # Create basemap for the interactive map - this will allow you to simply add layers to the basemap
 basemap <- leaflet(width = "100%",
