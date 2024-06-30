@@ -206,7 +206,7 @@ drought_statistics <- function(stations) {
     dplyr::left_join(allstations[, 1:2]) %>%
     dplyr::arrange(STATION_NUMBER) %>%
     # Add in the % MAD categories - as per the RFC website
-    dplyr::mutate(MAD_bin = case_when(
+    dplyr::mutate(MAD_bin = dplyr::case_when(
       is.na(`% MAD`) ~ "Not ranked",
       `% MAD` < 1 ~ "<1%",
       `% MAD` >= 1 & `% MAD` < 5 ~ "1 to 5%",
@@ -215,7 +215,7 @@ drought_statistics <- function(stations) {
       `% MAD` >= 20 & `% MAD` <= 100 ~ "20 to 100%",
       `% MAD` > 100 ~ "> 100%"
     )) %>%
-    dplyr::mutate(MAD_bin_q24 = case_when(
+    dplyr::mutate(MAD_bin_q24 = dplyr::case_when(
       is.na(`% MAD_Q_24hours`) ~ "Not ranked",
       `% MAD_Q_24hours` < 1 ~ "<1%",
       `% MAD_Q_24hours` >= 1 & `% MAD_Q_24hours` < 5 ~ "1 to 5%",

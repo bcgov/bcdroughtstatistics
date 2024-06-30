@@ -96,3 +96,119 @@ water_temp <- function(station_wt) {
     dplyr::mutate(`Was the site warmer than 20degC in the last 7 days?` = ifelse(is.na(`Was the site warmer than 20degC in the last 7 days?`), "No", `Was the site warmer than 20degC in the last 7 days?`))
 
 }
+
+
+#' Get water temperatures from AQUARIUS
+#' @description Function for getting stream and lake temperatures from provincial aquarius sites
+#' @param station_wt Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself
+#' @keywords water temperature functions
+#' @export
+#' @examples \dontrun{}
+#' @return Returns the temperature data for sites retrieved from tidyhydat.ws
+
+water_temp_aquarius <- function(station_wt, as_drought_stats = TRUE) {
+
+  # get the data
+  aq_data <- read.csv("https://www.env.gov.bc.ca/wsd/data_searches/water/WaterTemperature.csv") %>%
+    dplyr::mutate(Name_En = "Water temperature",
+                  Unit = "°C",
+                  Grade = -1,
+                  Symbol = NA,
+                  Approval = NA,
+                  Parameter = 5,
+                  Code = "TW") %>%
+    dplyr::rename(STATION_NUMBER = Location.ID, Date = Date.Time.UTC., STATION_NAME = Location.Name,
+                  LATITUDE = Latitude, LONGITUDE = Longitude)
+
+  # ======================
+  # Add in the temperature
+  temp_station_initial <- aq_data %>%
+    dplyr::select(STATION_NUMBER, Date,
+                  Name_En, Value, Unit, Grade, Symbol, Approval, Parameter, Code) %>%
+    dplyr::filter(STATION_NUMBER %in% station_wt)
+
+
+  # Calculate the daily statistics
+  temp_station <- temp_station_initial %>%
+    dplyr::mutate(date_dmy = as.Date(Date)) %>%
+    dplyr::filter(date_dmy %in% c(seq(as.Date(Sys.Date()) - 6, as.Date(Sys.Date()), by = "day"))) %>%
+    # filter for the last seven days of data from today's date
+    dplyr::group_by(STATION_NUMBER, date_dmy) %>%
+    dplyr::summarise(
+      max_daily_temp = round(max(Value, na.rm = TRUE), digits = 2),
+      mean_daily_temp = round(mean(Value, na.rm = TRUE), digits = 2),
+      min_daily_temp = round(min(Value, na.rm = TRUE), digits = 2)
+    )
+
+  # Calculate the mean max temp for the last 7 days for each station
+  maxtemp_7daymean <- temp_station %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(STATION_NUMBER) %>%
+    dplyr::mutate(maxtemp7daymean = round(mean(max_daily_temp, na.rm = TRUE), digits = 2)) %>%
+    dplyr::select(STATION_NUMBER, maxtemp7daymean) %>%
+    unique()
+
+  # Calculate the max, min and mean temperature over the last 24 hours
+  maxtemp_24hours <- temp_station_initial %>%
+    dplyr::filter(Date >= Sys.time() - 60 * 60 * 24) %>%
+    # get last 24 hours of data
+    dplyr::group_by(STATION_NUMBER) %>%
+    dplyr::mutate(maxtemp24hours = round(max(Value, na.rm = TRUE), digits = 2)) %>%
+    dplyr::mutate(mintemp24hours = round(min(Value, na.rm = TRUE), digits = 2)) %>%
+    dplyr::mutate(meantemp24hours = round(mean(Value, na.rm = TRUE), digits = 2)) %>%
+    dplyr::select(STATION_NUMBER, maxtemp24hours, mintemp24hours, meantemp24hours) %>%
+    unique()
+
+  # Did the 23 degree C threshold get breached in the last 7 days?
+  threshold_23_yn <- temp_station_initial %>%
+    dplyr::mutate(date_dmy = as.Date(Date)) %>%
+    dplyr::filter(date_dmy %in% c(seq(as.Date(Sys.Date()) - 6, as.Date(Sys.Date()), by = "day"))) %>%
+    # filter for the last seven days of data from today's date
+    # dplyr::group_by(STATION_NUMBER) %>%
+    dplyr::filter(Value >= 23) %>%
+    dplyr::mutate(`Was the site warmer than 23degC in the last 7 days?` = "Yes") %>%
+    dplyr::mutate(Date_format = format(date_dmy, "%b %d")) %>%
+    dplyr::group_by(STATION_NUMBER, `Was the site warmer than 23degC in the last 7 days?`) %>%
+    dplyr::summarise(Dates_above23threshold = paste0(unique(Date_format), collapse = "; ")) %>%
+    dplyr::select(STATION_NUMBER, `Was the site warmer than 23degC in the last 7 days?`, Dates_above23threshold) %>%
+    unique()
+
+  # Did the temperature exceed 20 degrees C in the last 7 days?
+  threshold_20_yn <- temp_station_initial %>%
+    dplyr::mutate(date_dmy = as.Date(Date)) %>%
+    dplyr::filter(date_dmy %in% c(seq(as.Date(Sys.Date()) - 6, as.Date(Sys.Date()), by = "day"))) %>%
+    # filter for the last seven days of data from today's date
+    dplyr::filter(Value >= 20) %>%
+    dplyr::mutate(`Was the site warmer than 20degC in the last 7 days?` = "Yes") %>%
+    dplyr::mutate(Date_format = format(date_dmy, "%b %d")) %>%
+    dplyr::group_by(STATION_NUMBER, `Was the site warmer than 20degC in the last 7 days?`) %>%
+    dplyr::summarize(Dates_above20threshold = paste0(unique(Date_format), collapse = "; ")) %>%
+    dplyr::select(STATION_NUMBER, `Was the site warmer than 20degC in the last 7 days?`, Dates_above20threshold) %>%
+    unique()
+
+  # Join all together
+  temp_data_1 <- dplyr::full_join(maxtemp_7daymean, maxtemp_24hours)
+  temp_data_2 <- dplyr::full_join(temp_data_1, threshold_23_yn)
+  temp_data_3 <- dplyr::full_join(temp_data_2, threshold_20_yn) %>%
+    dplyr::mutate(`Was the site warmer than 23degC in the last 7 days?` = ifelse(is.na(`Was the site warmer than 23degC in the last 7 days?`), "No", `Was the site warmer than 23degC in the last 7 days?`)) %>%
+    dplyr::mutate(`Was the site warmer than 20degC in the last 7 days?` = ifelse(is.na(`Was the site warmer than 20degC in the last 7 days?`), "No", `Was the site warmer than 20degC in the last 7 days?`))
+
+  if (as_drought_stats) {
+    stn_info <- aq_data %>%
+      select(ID = STATION_NUMBER, "Station Name" = STATION_NAME, LATITUDE, LONGITUDE) %>%
+      distinct()
+
+    temp_data_3a <- temp_data_3 %>%
+      rename(ID = STATION_NUMBER) %>%
+      left_join(stn_info,by = join_by(ID)) %>%
+      rename("Mean max temp from last 7 days (degC)" = maxtemp7daymean,
+             "Max temp over last 24 hours (degC)" = maxtemp24hours,
+             "Min temp over last 24 hours (degC)" = mintemp24hours,
+             "Mean temp over last 24 hours (degC)" = meantemp24hours,
+             "Dates above 23 degC in last 7 days" = Dates_above23threshold,
+             "Dates above 20 degC in last 7 days" = Dates_above20threshold)
+
+  }
+
+  return(temp_data_3)
+}

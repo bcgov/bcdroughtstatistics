@@ -737,6 +737,17 @@ The recommended mean weekly maximum temperature (which is the mean of the max da
 Map data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ``` {r watertempmaps}
+tor_stns <- c("08LC0001","08LC0002", "08LE0006", "08LG0006", "08LG0009", "08LG0015",
+              "08MF0004",
+             "08NH0001", "08NM0002",
+             "08NM0003", "08NM0004", "08NM0010", "08NM0012", "08NM0026", "08NM0032",
+             "08NM0034", "08NM0047", "08NM0049", "08NM0050", "08NM0051", "08NM0052",
+             "08NM0053", "08NM0054", "08NM0065")
+aq_temps <- bcdroughtstatistics::water_temp_aquarius(station_wt = tor_stns, as_drought_stats = TRUE)
+
+table_stats_new <- table_stats_new %>% 
+  bind_rows(aq_temps)
+
 # Maps - assemble data
 table_out_temp <- table_stats_new %>%
   dplyr::filter(!is.na(`Mean max temp from last 7 days (degC)`)) %>%

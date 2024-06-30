@@ -37,7 +37,7 @@ calc_percentiles <- function(historical_flow, realtime_data, expected, number_of
                                        purrr::map2_dbl(data, Value, ~ ecdf(.x$Value)(.y)), NA), NA), NA)
     ) %>%
     dplyr::left_join(allstations, by = c("STATION_NUMBER")) %>%
-    dplyr::mutate(pct_bin = case_when(
+    dplyr::mutate(pct_bin = dplyr::case_when(
       is.na(prctile) ~ "Not ranked",
       prctile >= 0 & prctile <= 0.01 ~ "Low",
       prctile > 0.01 & prctile <= 0.10 ~ "Much below normal (<10)",
