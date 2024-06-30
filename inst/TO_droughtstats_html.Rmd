@@ -315,7 +315,7 @@ table_stats_new <- table_out %>%
                 `Last 24 hour Q (m3/s)` = round(`Last 24 hour Q (m3/s)`, digits = 2)) 
 
 ```
-This report contains low streamflow information for the `r params$region`. Please see the [Provincial Drought Portal](https://governmentofbc.maps.arcgis.com/apps/MapSeries/index.html?appid=838d533d8062411c820eef50b08f7ebc) for information about provincial conditions. Data is provided as is and may be unverified and uncorrected. Users assume all responsibility for use and interpretation of data within. 
+This report contains low streamflow information for the `r params$region`. Please see the [B.C. Drought Portal](https://droughtportal.gov.bc.ca/) for information about provincial conditions. Data is provided as is and may be unverified and uncorrected. Users assume all responsibility for use and interpretation of data within. 
 
 Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html) and [B.C. Real-time Data](https://aqrt.nrs.gov.bc.ca/Data), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [waterresources@gov.bc.ca](mailto:waterresources@gov.bc.ca). 
 
@@ -732,7 +732,7 @@ if (params$table_format == "html"){
 
 ## Maximum Daily Water Temperature
 
-The recommended mean weekly maximum temperature (which is the mean of the max daily temperatures from the last seven days) for the protection of all fish species should not exceed 20 degrees C `r '\\degree'`C and the maximum daily temperature should not exceed 23`r '\\degree'`C degrees C. Reaching either one of these thresholds may trigger fisheries closures and water use restrictions within the affected watersheds. Only a small subset of stations from the Water Survey of Canada collect temperature data in addition to streamflow data; thus the number of sites shown here is much smaller than for streamflow.
+The recommended mean weekly maximum temperature (which is the mean of the max daily temperatures from the last seven days) for the protection of all fish species should not exceed 20 degrees C `r '\\degree'`C and the maximum daily temperature should not exceed 23`r '\\degree'`C degrees C. Reaching either one of these thresholds may trigger fisheries closures and water use restrictions within the affected watersheds. Only a small subset of stations from the Water Survey of Canada collect temperature data in addition to streamflow data; thus the number of sites shown here is much smaller than for streamflow. Some provincially run hydrometric stations may also collect temperature data and may be shown.
 
 Map data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
