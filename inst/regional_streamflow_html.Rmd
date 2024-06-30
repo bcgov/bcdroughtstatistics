@@ -690,7 +690,9 @@ wc_stns <- c("08HA0018", "08HA0020", "08HA0023", "08HA0026",
              "08HB0031", "08HB0032", "08HD0003")
 aq_temps <- bcdroughtstatistics::water_temp_aquarius(station_wt = wc_stns, as_drought_stats = TRUE)
 
+
 table_out <- table_out %>% 
+table_stats_new <- table_stats_new %>% 
   bind_rows(aq_temps)
 
 # Maps - assemble data
