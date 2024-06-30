@@ -198,7 +198,7 @@ water_temp_aquarius <- function(station_wt, as_drought_stats = TRUE) {
       select(ID = STATION_NUMBER, "Station Name" = STATION_NAME, LATITUDE, LONGITUDE) %>%
       distinct()
 
-    temp_data_3a <- temp_data_3 %>%
+    temp_data_3 <- temp_data_3 %>%
       rename(ID = STATION_NUMBER) %>%
       left_join(stn_info,by = join_by(ID)) %>%
       rename("Mean max temp from last 7 days (degC)" = maxtemp7daymean,

@@ -4,7 +4,7 @@
 \alias{water_temp_aquarius}
 \title{Get water temperatures from AQUARIUS}
 \usage{
-water_temp_aquarius(station_wt)
+water_temp_aquarius(station_wt, as_drought_stats = TRUE)
 }
 \arguments{
 \item{station_wt}{Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself}
