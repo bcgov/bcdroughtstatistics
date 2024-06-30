@@ -1092,7 +1092,9 @@ table_all <- table_stats_new %>%
 if (params$table_format == "html"){
   table_all %>%
     dplyr::select(-Date) %>%
-    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
+    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = ifelse(nchar(ID)==7,
+                                                                                   paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID),
+                                                                                   paste0("https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", ID, "/DataSet/TW/Telemetry/Interval/Latest")))) %>%
     # Colours of percentiles
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
                                                                              color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
