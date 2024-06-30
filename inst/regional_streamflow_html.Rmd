@@ -79,12 +79,12 @@ library(bcdroughtstatistics)
 
 # Download BC Gov logo 
 #download_bc_logo()
- ## turns image into a ggplot2 object
+## turns image into a ggplot2 object
 #bc_logo <- magick::image_read("data/BCID_V_rgb_pos.png") 
 
 ```
- 
- 
+
+
 
 ```{r setup, include=FALSE}
 
@@ -114,11 +114,11 @@ options(knitr.table.format = params$table_format)
 
 ## Load realtime stations and convert to spatial object
 stns_sf <-  sf::st_as_sf(
-    tidyhydat::realtime_stations(prov_terr_state_loc = "BC"),
-    coords = c("LONGITUDE", "LATITUDE"),
-    crs = 4326,
-    agr = "constant"
-  ) %>%
+  tidyhydat::realtime_stations(prov_terr_state_loc = "BC"),
+  coords = c("LONGITUDE", "LATITUDE"),
+  crs = 4326,
+  agr = "constant"
+) %>%
   bcmaps::transform_bc_albers()
 
 ```
@@ -136,7 +136,7 @@ drought <- bcdroughtstatistics::scrape_drought_map() %>%
   as("Spatial") %>%
   sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
   sp::spTransform(CRS("+init=epsg:4326"))
-  
+
 ### Spatial Cleaning
 
 ## Choose the correct region
@@ -190,32 +190,32 @@ cities <- bc_cities() %>%
   #                   "Quesnel", "Williams Lake", "Kamloops", "Revelstoke",
   #                   "Golden", "Cranbrook", "Nelson","Vancouver",
   #                   "Victoria", "Nanaimo", "Campbell River", "Bella Coola")) %>%
- dplyr::mutate(
+  dplyr::mutate(
     COORDS = map(geometry, st_coordinates),
     COORDS_X = map_dbl(COORDS, 1),
     COORDS_Y = map_dbl(COORDS, 2)
-   ) ## a bit of hack to get repelled labels
+  ) ## a bit of hack to get repelled labels
 
 ## Some munging to individually set nudge for specific map lebels
 cities$nudge_x <- 20000
 cities$nudge_y <- 15000
- 
+
 cities_wc <- cities 
-  #dplyr::filter(NAME %in% cities_regions) if you want to filter for specific cities
+#dplyr::filter(NAME %in% cities_regions) if you want to filter for specific cities
 
 # Create basemap for the interactive map - this will allow you to simply add layers to the basemap
 basemap <- leaflet(width = "100%",
                    options = leaflet::leafletOptions(attributionControl = FALSE)) %>%
-   addProviderTiles("Esri.WorldTopoMap") %>%
-   #fitBounds(48, 50, -139, -120) %>%
-   #setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
-   addMapPane("polygons", zIndex = 400) %>% # order so the polygons are above the drought monitor. Lower number puts the layer closer to the bottom
-   addMapPane("BC Provincial Drought Polygons", zIndex = 405) %>%
-   addLayersControl(baseGroups = c("BC Provincial Drought Polygons"),
+  addProviderTiles("Esri.WorldTopoMap") %>%
+  #fitBounds(48, 50, -139, -120) %>%
+  #setView( lng = -126, lat = 54.2, zoom = 5 ) %>%
+  addMapPane("polygons", zIndex = 400) %>% # order so the polygons are above the drought monitor. Lower number puts the layer closer to the bottom
+  addMapPane("BC Provincial Drought Polygons", zIndex = 405) %>%
+  addLayersControl(baseGroups = c("BC Provincial Drought Polygons"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
-   addLayersControl(overlayGroups = c("BC Provincial Drought Polygons"),
+  addLayersControl(overlayGroups = c("BC Provincial Drought Polygons"),
                    options = layersControlOptions(collapsed = F)) %>%
-   addPolygons(data = spdf_select,
+  addPolygons(data = spdf_select,
               group = "BC Provincial Drought Polygons",
               weight = 3,
               color = '#2900b6',
@@ -225,7 +225,7 @@ basemap <- leaflet(width = "100%",
               label = ~spdf_select@data$BasinName,
               popup = paste0("Drought Level = ", spdf_select@data$DroughtLevel), 
               options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
-   addPolygons(data = region_watershed_interactive,
+  addPolygons(data = region_watershed_interactive,
               group = "polygons",
               weight = 3,
               color = 'black',
@@ -256,11 +256,11 @@ if ("08HB032" %in% table_out$ID) {
 
 
 date_annot <- unique(table_out$Date)[!is.na(unique(table_out$Date))]
- 
+
 ```
 This report contains low streamflow information for the `r params$region`. Please see the [Provincial Drought Portal](https://governmentofbc.maps.arcgis.com/apps/MapSeries/index.html?appid=838d533d8062411c820eef50b08f7ebc) for information about provincial conditions. Data is provided as is and may be unverified and uncorrected. Users assume all responsibility for use and interpretation of data within. 
 
-Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [Jaroslaw Szczot, Senior Aquatic Ecologist](mailto:Jaroslaw.Szczot@gov.bc.ca). 
+Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html) and [B.C. Real-time Data](https://aqrt.nrs.gov.bc.ca/Data), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [Jaroslaw Szczot, Senior Aquatic Ecologist](mailto:Jaroslaw.Szczot@gov.bc.ca). 
 
 This report was generated on `r format(Sys.time(), '%d %B %Y, %H:%M %p')`.
 
@@ -285,8 +285,8 @@ Map data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ## Expected NAWW percentile bins
 expected <- c("Not ranked", "Low","Much below normal (<10)", 
-   "Below Normal (10-24)", "Normal (25-75)", 
-   "Above normal (76-90)","Much above normal (>90)", "High")
+              "Below Normal (10-24)", "Normal (25-75)", 
+              "Above normal (76-90)","Much above normal (>90)", "High")
 
 ## Expected NAWW percentile bins
 #expected <- c(
@@ -319,58 +319,58 @@ naww_pal <- c("#FFFFFF","#F90010","#B31F23","#FEA116","#228B22","#46DED2","#0003
 named_naww_pal <- setNames(naww_pal, expected)
 
 plot_colours <- c("Not ranked" = "#FFFFFF",
-                      "Low" = "#F90010",
-                      "Much below normal (<10)" = "#B31F23",
-                      "Below Normal (10-24)" = "#FEA116",
-                      "Normal (25-75)" = "#228B22",
-                      "Above normal (76-90)" = "#46DED2",
-                      "Much above normal (>90)" = "#0003F6",
-                      "High" = "#000000"
-                      )
+                  "Low" = "#F90010",
+                  "Much below normal (<10)" = "#B31F23",
+                  "Below Normal (10-24)" = "#FEA116",
+                  "Normal (25-75)" = "#228B22",
+                  "Above normal (76-90)" = "#46DED2",
+                  "Much above normal (>90)" = "#0003F6",
+                  "High" = "#000000"
+)
 
 # Plot map using ggplot
 if (params$table_format == "latex") {
   
   data_map <- table_out %>%
     st_as_sf(coords = c("LONGITUDE", "LATITUDE"),
-           crs= 4326,
-           agr= "constant") 
-
+             crs= 4326,
+             agr= "constant") 
+  
   data_map = st_as_sf(data_map, coords = c("LONGITUDE", "LATITUDE"),
-                     crs = 4326, agr= "constant")
+                      crs = 4326, agr= "constant")
   # Plot
   ggplot() +
-   geom_sf(data = region_watershed, fill = "grey95", colour = "grey90") +
-  #geom_sf(data = pct_flow_last24, 
-  #        aes(geometry = geometry, colour = pct_flow_last24$pct_bin),
-  #        size = 3) +
+    geom_sf(data = region_watershed, fill = "grey95", colour = "grey90") +
+    #geom_sf(data = pct_flow_last24, 
+    #        aes(geometry = geometry, colour = pct_flow_last24$pct_bin),
+    #        size = 3) +
     geom_sf(data = data_map, #%>% 
-              #dplyr::filter(!is.na(pct_bin_7day)), 
-          aes(geometry = geometry, color = pct_bin_7day), 
-          size = 3) +
-  scale_colour_manual(name = "PERCENT OF NORMAL", 
-                      values = plot_colours,
-                      drop = FALSE) +
- geom_sf(data = cities_wc, size = 2, shape = 21, fill = "white", colour = "black") +
-  geom_shadowtext(data = cities_wc,
-    mapping = aes(
-      x = COORDS_X,
-      y = COORDS_Y,
-      label = NAME
-    ),
-    nudge_x = cities_wc$nudge_x,
-    nudge_y = cities_wc$nudge_y,
-    size = 3,
-    colour = "black",
-    bg.colour = "white"
-  ) +
-  annotation_north_arrow(location = "bl", which_north = "grid", pad_x = unit(1, "cm"), pad_y = unit(9, "cm")) +
-  #annotation_raster(bc_logo, 1987.509, 2283.774, 1771.908, 1790.425) +
-  theme_void() +
-  theme(panel.background = element_rect(fill = "aliceblue"),
-        legend.position = c(.16, .20),
-        legend.box.background = element_rect(),
-        legend.box.margin = margin(5, 5, 5, 5))
+            #dplyr::filter(!is.na(pct_bin_7day)), 
+            aes(geometry = geometry, color = pct_bin_7day), 
+            size = 3) +
+    scale_colour_manual(name = "PERCENT OF NORMAL", 
+                        values = plot_colours,
+                        drop = FALSE) +
+    geom_sf(data = cities_wc, size = 2, shape = 21, fill = "white", colour = "black") +
+    geom_shadowtext(data = cities_wc,
+                    mapping = aes(
+                      x = COORDS_X,
+                      y = COORDS_Y,
+                      label = NAME
+                    ),
+                    nudge_x = cities_wc$nudge_x,
+                    nudge_y = cities_wc$nudge_y,
+                    size = 3,
+                    colour = "black",
+                    bg.colour = "white"
+    ) +
+    annotation_north_arrow(location = "bl", which_north = "grid", pad_x = unit(1, "cm"), pad_y = unit(9, "cm")) +
+    #annotation_raster(bc_logo, 1987.509, 2283.774, 1771.908, 1790.425) +
+    theme_void() +
+    theme(panel.background = element_rect(fill = "aliceblue"),
+          legend.position = c(.16, .20),
+          legend.box.background = element_rect(),
+          legend.box.margin = margin(5, 5, 5, 5))
 }
 
 # Render interactive map for 
@@ -387,7 +387,7 @@ if (params$table_format == "html") {
   interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
   interactive_data <- data.frame(interactive_data)
   
- # pal <- colorFactor(palette = naww_pal, domain = expected)
+  # pal <- colorFactor(palette = naww_pal, domain = expected)
   pal <- colorFactor(palette = c("#FFFFFF", "#F90010", "#B31F23", "#FEA116", "#228B22", 
                                  "#46DED2", "#0003F6", "#000000"), levels = c("Not ranked", 
                                                                               "Low","Much below normal (<10)", 
@@ -395,48 +395,48 @@ if (params$table_format == "html") {
                                                                               "Above normal (76-90)","Much above normal (>90)", "High"))
   # Plot interactive plot
   basemap %>%
-   addMapPane("Streamflow - Seven Day Percentiles", zIndex = 410) %>%
-   addMapPane("Streamflow - Last 24 Hour Percentiles", zIndex = 420) %>%
-   addLayersControl(baseGroups = c("Streamflow - Seven Day Percentiles",
-                                   "Streamflow - Last 24 Hour Percentiles",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = FALSE)) %>%
-   addLayersControl(overlayGroups = c("Streamflow - Seven Day Percentiles",
-                                   "Streamflow - Last 24 Hour Percentiles",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = F)) %>%
-   addCircleMarkers(data = interactive_data,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = "Streamflow - Seven Day Percentiles",
-                   radius = 5,
-                   fillColor = ~pal(pct_bin_7day),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, "<br>",
-                            "Seven Day Discharge (m3/s) = ", round(interactive_data$Latest.7.Day.Q..m3.s., digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data$pct_bin_7day, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_out$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
-                   label = ~paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, " ", interactive_data$pct_bin_7day),
-              options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
-  # Last 24 hours 
-   addCircleMarkers(data = interactive_data,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = "Streamflow - Last 24 Hour Percentiles",
-                   radius = 5,
-                   fillColor = ~pal(pct_bin_24hours),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, "<br>",
-                            "Discharge Over Last 24 Hours (m3/s) = ", round(interactive_data$Last.24.hour.Q..m3.s., digits = 2), "<br>", 
-                            "Percentile = ", round(interactive_data$Percentile...Last.24.Hour.Q, digits = 0), "<br>", 
-                            "Percentile Category: ", interactive_data$pct_bin_24hours, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_out$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
-                   label = ~paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, " ", interactive_data$pct_bin_24hours),
-              options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
-     addLegend(colors = naww_pal,
-            labels = expected, opacity = 1,
-            title = paste0("7 Day Streamflow Percentile Colours")) 
-                   
+    addMapPane("Streamflow - Seven Day Percentiles", zIndex = 410) %>%
+    addMapPane("Streamflow - Last 24 Hour Percentiles", zIndex = 420) %>%
+    addLayersControl(baseGroups = c("Streamflow - Seven Day Percentiles",
+                                    "Streamflow - Last 24 Hour Percentiles",
+                                    "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = FALSE)) %>%
+    addLayersControl(overlayGroups = c("Streamflow - Seven Day Percentiles",
+                                       "Streamflow - Last 24 Hour Percentiles",
+                                       "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = F)) %>%
+    addCircleMarkers(data = interactive_data,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = "Streamflow - Seven Day Percentiles",
+                     radius = 5,
+                     fillColor = ~pal(pct_bin_7day),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, "<br>",
+                                    "Seven Day Discharge (m3/s) = ", round(interactive_data$Latest.7.Day.Q..m3.s., digits = 2), "<br>", 
+                                    "Percentile Category: ", interactive_data$pct_bin_7day, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_out$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                     label = ~paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, " ", interactive_data$pct_bin_7day),
+                     options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
+    # Last 24 hours 
+    addCircleMarkers(data = interactive_data,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = "Streamflow - Last 24 Hour Percentiles",
+                     radius = 5,
+                     fillColor = ~pal(pct_bin_24hours),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, "<br>",
+                                    "Discharge Over Last 24 Hours (m3/s) = ", round(interactive_data$Last.24.hour.Q..m3.s., digits = 2), "<br>", 
+                                    "Percentile = ", round(interactive_data$Percentile...Last.24.Hour.Q, digits = 0), "<br>", 
+                                    "Percentile Category: ", interactive_data$pct_bin_24hours, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", table_out$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                     label = ~paste0(interactive_data$`Station.Name`,", ", table_out$`ID`, " ", interactive_data$pct_bin_24hours),
+                     options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
+    addLegend(colors = naww_pal,
+              labels = expected, opacity = 1,
+              title = paste0("7 Day Streamflow Percentile Colours")) 
+  
 }
 
 ```
@@ -475,30 +475,30 @@ if (params$table_format == "html"){
   t_q7 <- much_below_normal_tbl %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#black",
-                                              ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000"))))))))) %>%
+                                                                             color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#black",
+                                                                                            ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
+                                                                                                   ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
+                                                                                                                 ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
+                                                                                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
+                                                                                                                               ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
+                                                                                                                                      "#000000"))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#black",
-                                              ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
-                                                           ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000"))))))))) %>%
+                                                                      color = ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#black",
+                                                                                     ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
+                                                                                            ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                                                                   ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
+                                                                                                          ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
+                                                                                                                 ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
+                                                                                                                        ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
+                                                                                                                               "#000000"))))))))) %>%
     kableExtra::kbl(format = "html", 
-          digits = 2, 
-          align = rep('c'), 
-          booktabs = T,
-          escape = F,
-          row.names = FALSE) %>%
-          #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
+                    digits = 2, 
+                    align = rep('c'), 
+                    booktabs = T,
+                    escape = F,
+                    row.names = FALSE) %>%
+    #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
   
   
@@ -565,7 +565,7 @@ plot_colours_MAD <- c("Not ranked" = naww_pal_MAD[1],
                       "10 to 20%" = naww_pal_MAD[5],
                       "20 to 100%" = naww_pal_MAD[6],
                       "> 100%" = naww_pal_MAD[7]
-                      )
+)
 MAD_levels <- c("Not ranked", "<1%", "1 to 5%", "5 to 10%", "10 to 20%", "20 to 100%", "> 100%")
 
 
@@ -573,7 +573,7 @@ MAD_levels <- c("Not ranked", "<1%", "1 to 5%", "5 to 10%", "10 to 20%", "20 to 
 if (params$table_format == "html") {
   
   # Configure the right format for the interactive map
-
+  
   interactive_data <- table_MAD %>%
     dplyr::filter(!is.na(LONGITUDE))
   
@@ -586,56 +586,56 @@ if (params$table_format == "html") {
   
   # Sites less that 10% MAD
   interactive_data_10 <- interactive_data %>%
-                     dplyr::filter(X..MAD <= 10)
+    dplyr::filter(X..MAD <= 10)
   
- # pal <- colorFactor(palette = naww_pal, domain = expected)
+  # pal <- colorFactor(palette = naww_pal, domain = expected)
   pal_MAD <- colorFactor(palette = naww_pal_MAD, levels = MAD_levels)
   
   region_watershed_interactive <- st_transform(region_watershed, CRS("+init=epsg:4326")) # transform to Google Mercator projection
   
   # Plot interactive plot
   basemap %>%
-   #addMapPane("BC Provincial Drought Polygons", zIndex = 410) %>%
-   addMapPane("All sites - % MAD", zIndex = 420) %>%
-   addMapPane("Sites with % MAD < 10%", zIndex = 430) %>%
-   addLayersControl(baseGroups = c("All sites - % MAD",
-                                   "Sites with % MAD < 10%",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = F)) %>%
-   addLayersControl(overlayGroups = c("All sites - % MAD",
-                                   "Sites with % MAD < 10%",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = F)) %>%
-   addCircleMarkers(data = interactive_data,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = "All sites - % MAD",
-                   radius = 5,
-                   fillColor = ~pal_MAD(MAD_bin),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                            "% MAD = ", round(interactive_data$X..MAD, digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data$MAD_bin,"<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
-                   label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD, digits = 2)),
-              options = pathOptions(pane = "All sites - % MAD")) %>%
-   addCircleMarkers(data = interactive_data_10,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = "Sites with % MAD < 10%",
-                   radius = 5,
-                   fillColor = ~pal_MAD(MAD_bin),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data_10$`Station.Name`,", ", interactive_data_10$`ID`, "<br>",
-                            "% MAD = ", round(interactive_data_10$X..MAD, digits = 2), "<br>", 
-                            "Percentile Category: ", interactive_data_10$MAD_bin, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_10$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
-                   label = ~paste0(interactive_data_10$`Station.Name`,", ", interactive_data_10$`ID`, "; % MAD = ", round(interactive_data_10$X..MAD, digits = 2)),
-              options = pathOptions(pane = "Sites with % MAD < 10%")) %>%
-     addLegend(colors = naww_pal_MAD,
-            labels = MAD_levels, opacity = 1,
-            title = paste0("% MAD")) 
-                   
+    #addMapPane("BC Provincial Drought Polygons", zIndex = 410) %>%
+    addMapPane("All sites - % MAD", zIndex = 420) %>%
+    addMapPane("Sites with % MAD < 10%", zIndex = 430) %>%
+    addLayersControl(baseGroups = c("All sites - % MAD",
+                                    "Sites with % MAD < 10%",
+                                    "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = F)) %>%
+    addLayersControl(overlayGroups = c("All sites - % MAD",
+                                       "Sites with % MAD < 10%",
+                                       "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = F)) %>%
+    addCircleMarkers(data = interactive_data,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = "All sites - % MAD",
+                     radius = 5,
+                     fillColor = ~pal_MAD(MAD_bin),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
+                                    "% MAD = ", round(interactive_data$X..MAD, digits = 2), "<br>", 
+                                    "Percentile Category: ", interactive_data$MAD_bin,"<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD, digits = 2)),
+                     options = pathOptions(pane = "All sites - % MAD")) %>%
+    addCircleMarkers(data = interactive_data_10,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = "Sites with % MAD < 10%",
+                     radius = 5,
+                     fillColor = ~pal_MAD(MAD_bin),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data_10$`Station.Name`,", ", interactive_data_10$`ID`, "<br>",
+                                    "% MAD = ", round(interactive_data_10$X..MAD, digits = 2), "<br>", 
+                                    "Percentile Category: ", interactive_data_10$MAD_bin, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_10$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
+                     label = ~paste0(interactive_data_10$`Station.Name`,", ", interactive_data_10$`ID`, "; % MAD = ", round(interactive_data_10$X..MAD, digits = 2)),
+                     options = pathOptions(pane = "Sites with % MAD < 10%")) %>%
+    addLegend(colors = naww_pal_MAD,
+              labels = MAD_levels, opacity = 1,
+              title = paste0("% MAD")) 
+  
 }
 
 
@@ -649,27 +649,27 @@ Any stations with LT MAD values of less than or equal to **<span style= "color: 
 Data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ```{r madtable}
-  
+
 if (params$table_format == "html"){
   t_mad <- MAD_below %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
-                                            color = ifelse(`% MAD`  <= 5, "#F90010",
-                                                           ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000")))) %>%
-      kableExtra::kbl(format = "html", 
-          digits = 2, 
-          align = rep('c'), 
-          booktabs = T,
-          escape = F,
-          row.names = FALSE) %>%
-          #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
+                                      color = ifelse(`% MAD`  <= 5, "#F90010",
+                                                     ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000")))) %>%
+    kableExtra::kbl(format = "html", 
+                    digits = 2, 
+                    align = rep('c'), 
+                    booktabs = T,
+                    escape = F,
+                    row.names = FALSE) %>%
+    #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
   
-    # Bold the 7th column if it exists
-    if (dim(MAD_below)[1] > 0) {
-      t_mad <- t_mad %>%
-         kableExtra::column_spec(7, bold = T) 
-    }
+  # Bold the 7th column if it exists
+  if (dim(MAD_below)[1] > 0) {
+    t_mad <- t_mad %>%
+      kableExtra::column_spec(7, bold = T) 
+  }
   
   t_mad
 }
@@ -683,16 +683,26 @@ The recommended mean weekly maximum temperature (which is the mean of the max da
 Map data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ``` {r watertempmaps}
+
+wc_stns <- c("08HA0018", "08HA0020", "08HA0023", "08HA0026",
+             "08HA0036", "08HA0045", "08HB0010", "08HB0011", "08HB0012", "08HB0013",
+             "08HB0016", "08HB0018", "08HB0019", "08HB0021", "08HB0022", "08HB0023",
+             "08HB0031", "08HB0032", "08HD0003")
+aq_temps <- bcdroughtstatistics::water_temp_aquarius(station_wt = wc_stns, as_drought_stats = TRUE)
+
+table_stats_new <- table_stats_new %>% 
+  bind_rows(aq_temps)
+
 # Maps - assemble data
 table_out_temp <- table_out %>%
   dplyr::filter(!is.na(`Mean max temp from last 7 days (degC)`)) %>%
-    dplyr::mutate(temp_bin = case_when( # Add in the % MAD categories - as per the RFC website
-     is.na(`Mean max temp from last 7 days (degC)`) ~ "Not ranked",
-     `Mean max temp from last 7 days (degC)` < 16 ~ "<16 degC",
-     `Mean max temp from last 7 days (degC)` >= 16 & `Mean max temp from last 7 days (degC)` < 20 ~ "16 to 20",
-     `Mean max temp from last 7 days (degC)` >= 20 & `Mean max temp from last 7 days (degC)` < 23 ~ "20 to 23",
-     `Mean max temp from last 7 days (degC)` >= 23 ~ "> or equal to 23"
-   )) 
+  dplyr::mutate(temp_bin = case_when( # Add in the % MAD categories - as per the RFC website
+    is.na(`Mean max temp from last 7 days (degC)`) ~ "Not ranked",
+    `Mean max temp from last 7 days (degC)` < 16 ~ "<16 degC",
+    `Mean max temp from last 7 days (degC)` >= 16 & `Mean max temp from last 7 days (degC)` < 20 ~ "16 to 20",
+    `Mean max temp from last 7 days (degC)` >= 20 & `Mean max temp from last 7 days (degC)` < 23 ~ "20 to 23",
+    `Mean max temp from last 7 days (degC)` >= 23 ~ "> or equal to 23"
+  )) 
 
 # Get the watertemps
 watertemp <- as.data.frame(table_out_temp) %>%
@@ -741,16 +751,16 @@ if (params$table_format == "html") {
   
   # Sites with a mean max daily temp over 20
   interactive_data_20 <- interactive_data %>%
-          dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 20) %>%
-          dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
+    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 20) %>%
+    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
   
   interactive_data_23 <- interactive_data %>%
-          dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 23) %>%
-          dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
+    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 23) %>%
+    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
   
   # Data frame of sites that exheeded 23 degrees C
   interactive_data_max23 <- interactive_data %>%
-          dplyr::filter(!is.na("Dates.above.23.degC.in.last.7.days")) 
+    dplyr::filter(!is.na("Dates.above.23.degC.in.last.7.days")) 
   
   # get colour palette
   naww_pal_temp <- c("#FFFFFF", # Npt ranked
@@ -765,93 +775,117 @@ if (params$table_format == "html") {
   
   # Plot interactive plot
   temp_plot_1 <-  basemap %>%
-   addMapPane("All sites - 7 Day Mean Max Daily Temp", zIndex = 420) %>%
-   addMapPane(">20 Deg C - 7 Day Mean Max Daily Temp", zIndex = 430) %>%
-   addMapPane(">23 Deg C - 7 Day Mean Max Daily Temp", zIndex = 435) %>%
-   addMapPane(">23 Deg C - Max Temp (Last 7 Days)", zIndex = 440) %>%
-   addLayersControl(baseGroups = c("All sites - 7 Day Mean Max Daily Temp",
-                                   ">20 Deg C - 7 Day Mean Max Daily Temp",
-                                   ">23 Deg C - 7 Day Mean Max Daily Temp",
-                                   ">23 Deg C - Max Temp (Last 7 Days)",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = FALSE)) %>%
-   addLayersControl(overlayGroups = c("All sites - 7 Day Mean Max Daily Temp",
-                                   ">20 Deg C - 7 Day Mean Max Daily Temp",
-                                   ">23 Deg C - 7 Day Mean Max Daily Temp",
-                                   ">23 Deg C - Max Temp (Last 7 Days)",
-                                   "BC Provincial Drought Polygons"),
-                   options = layersControlOptions(collapsed = F)) %>%
-   addCircleMarkers(data = interactive_data,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = "All sites - 7 Day Mean Max Daily Temp",
-                   radius = 5,
-                   fillColor = ~pal_temp(temp_bin),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                            "7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                            "Max temp over last 24 hours (deg C) = ", interactive_data$Max.temp.over.last.24.hours..degC., "<br>", 
-                            "Dates above 20degC (last 7 days) = ", interactive_data$Dates.above.20.degC.in.last.7.days, "<br>", 
-                            "Dates above 23degC (last 7 days) = ", interactive_data$Dates.above.23.degC.in.last.7.days, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
-                   label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, 
-                                   "; 7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
-                   options = pathOptions(pane = "All sites - 7 Day Mean Max Daily Temp")) %>%
-  addCircleMarkers(data = interactive_data_20,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = ">20 Deg C - 7 Day Mean Max Daily Temp",
-                   radius = 5,
-                   fillColor = ~pal_temp(temp_bin),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, "<br>",
-                            "7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                            "Max temp over last 24 hours (deg C) = ", interactive_data_20$Max.temp.over.last.24.hours..degC., "<br>", 
-                            "Dates above 20degC (last 7 days) = ", interactive_data_20$Dates.above.20.degC.in.last.7.days, "<br>", 
-                            "Dates above 23degC (last 7 days) = ", interactive_data_20$Dates.above.23.degC.in.last.7.days, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_20$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
-                   label = ~paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, 
-                                   "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
-                   options = pathOptions(pane = ">20 Deg C - 7 Day Mean Max Daily Temp"))  %>%
-  addCircleMarkers(data = interactive_data_23,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = ">23 Deg C - 7 Day Mean Max Daily Temp",
-                   radius = 5,
-                   fillColor = ~pal_temp(temp_bin),
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, "<br>",
-                            "7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                            "Max temp over last 24 hours (deg C) = ", interactive_data_23$Max.temp.over.last.24.hours..degC., "<br>", 
-                            "Dates above 20degC (last 7 days) = ", interactive_data_23$Dates.above.20.degC.in.last.7.days, "<br>", 
-                            "Dates above 23degC (last 7 days) = ", interactive_data_23$Dates.above.23.degC.in.last.7.days, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
-                   label = ~paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, 
-                                   "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
-                   options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
-     addLegend(colors = naww_pal_temp,
-            labels = temp_levels, opacity = 1,
-            title = paste0("7 Day Max Daily Temp")) 
+    addMapPane("All sites - 7 Day Mean Max Daily Temp", zIndex = 420) %>%
+    addMapPane(">20 Deg C - 7 Day Mean Max Daily Temp", zIndex = 430) %>%
+    addMapPane(">23 Deg C - 7 Day Mean Max Daily Temp", zIndex = 435) %>%
+    addMapPane(">23 Deg C - Max Temp (Last 7 Days)", zIndex = 440) %>%
+    addLayersControl(baseGroups = c("All sites - 7 Day Mean Max Daily Temp",
+                                    ">20 Deg C - 7 Day Mean Max Daily Temp",
+                                    ">23 Deg C - 7 Day Mean Max Daily Temp",
+                                    ">23 Deg C - Max Temp (Last 7 Days)",
+                                    "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = FALSE)) %>%
+    addLayersControl(overlayGroups = c("All sites - 7 Day Mean Max Daily Temp",
+                                       ">20 Deg C - 7 Day Mean Max Daily Temp",
+                                       ">23 Deg C - 7 Day Mean Max Daily Temp",
+                                       ">23 Deg C - Max Temp (Last 7 Days)",
+                                       "BC Provincial Drought Polygons"),
+                     options = layersControlOptions(collapsed = F)) %>%
+    addCircleMarkers(data = interactive_data,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = "All sites - 7 Day Mean Max Daily Temp",
+                     radius = 5,
+                     fillColor = ~pal_temp(temp_bin),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", interactive_data$Max.temp.over.last.24.hours..degC., "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", interactive_data$Dates.above.20.degC.in.last.7.days, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", interactive_data$Dates.above.23.degC.in.last.7.days, "<br>",
+                                    ifelse(nchar(interactive_data$`ID`)==7,
+                                           paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                  interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                           paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                  interactive_data$`ID`, 
+                                                  "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                  "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
+                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     options = pathOptions(pane = "All sites - 7 Day Mean Max Daily Temp")) %>%
+    addCircleMarkers(data = interactive_data_20,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = ">20 Deg C - 7 Day Mean Max Daily Temp",
+                     radius = 5,
+                     fillColor = ~pal_temp(temp_bin),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", interactive_data_20$Max.temp.over.last.24.hours..degC., "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", interactive_data_20$Dates.above.20.degC.in.last.7.days, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", interactive_data_20$Dates.above.23.degC.in.last.7.days, "<br>",
+                                    ifelse(nchar(interactive_data_20$`ID`)==7,
+                                           paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                  interactive_data_20$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                           paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                  interactive_data_20$`ID`, 
+                                                  "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                  "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
+                     label = ~paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     options = pathOptions(pane = ">20 Deg C - 7 Day Mean Max Daily Temp"))  %>%
+    addCircleMarkers(data = interactive_data_23,
+                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     group = ">23 Deg C - 7 Day Mean Max Daily Temp",
+                     radius = 5,
+                     fillColor = ~pal_temp(temp_bin),
+                     fillOpacity = 1,
+                     color = "black", opacity = 0.7, weight = 1.5,
+                     popup = paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", interactive_data_23$Max.temp.over.last.24.hours..degC., "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", interactive_data_23$Dates.above.20.degC.in.last.7.days, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", interactive_data_23$Dates.above.23.degC.in.last.7.days, "<br>",
+                                    ifelse(nchar(interactive_data_23$`ID`)==7,
+                                           paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                  interactive_data_23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                           paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                  interactive_data_23$`ID`, 
+                                                  "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                  "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
+                     label = ~paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
+    addLegend(colors = naww_pal_temp,
+              labels = temp_levels, opacity = 1,
+              title = paste0("7 Day Max Daily Temp")) 
   
   # Add in the circles that show the dates that went above 23 deg C
   if (dim(interactive_data_23)[1] > 0) {
     temp_plot_2 <- temp_plot_1 %>%
-        addCircleMarkers(data = interactive_data_max23,
-                   lng = ~LONGITUDE, lat = ~LATITUDE,
-                   group = ">23 Deg C - Max Temp (Last 7 Days)",
-                   radius = 5,
-                   fillColor = naww_pal_temp[5],
-                   fillOpacity = 1,
-                   color = "black", opacity = 0.7, weight = 1.5,
-                   popup = paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, "<br>",
-                            "7 Day Max Daily Temp (degC) = ", round(interactive_data_max23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                            "Max temp over last 24 hours (deg C) = ", interactive_data_max23$Max.temp.over.last.24.hours..degC., "<br>", 
-                            "Dates above 20degC (last 7 days) = ", interactive_data_max23$Dates.above.20.degC.in.last.7.days, "<br>", 
-                            "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days, "<br>",
-                            "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_max23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
-                   label = ~paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, 
-                                   "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days),
-                   options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  
+      addCircleMarkers(data = interactive_data_max23,
+                       lng = ~LONGITUDE, lat = ~LATITUDE,
+                       group = ">23 Deg C - Max Temp (Last 7 Days)",
+                       radius = 5,
+                       fillColor = naww_pal_temp[5],
+                       fillOpacity = 1,
+                       color = "black", opacity = 0.7, weight = 1.5,
+                       popup = paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, "<br>",
+                                      "7 Day Max Daily Temp (degC) = ", round(interactive_data_max23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
+                                      "Max temp over last 24 hours (deg C) = ", interactive_data_max23$Max.temp.over.last.24.hours..degC., "<br>", 
+                                      "Dates above 20degC (last 7 days) = ", interactive_data_max23$Dates.above.20.degC.in.last.7.days, "<br>", 
+                                      "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days, "<br>",
+                                      ifelse(nchar(interactive_data_max23$`ID`)==7,
+                                             paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                    interactive_data_max23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                             paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                    interactive_data_max23$`ID`, 
+                                                    "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                    "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
+                       label = ~paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, 
+                                       "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days),
+                       options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  
   } else {
     temp_plot_2 <- temp_plot_1
   }
@@ -880,19 +914,21 @@ watertemp <- watertemp %>%
 
 if (params$table_format == "html"){
   watertemp %>%
-    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
-    dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
-                                                                     color = ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#B31F23", "#000000"))) %>%
+    dplyr::mutate(`Station Name` = cell_spec(
+      `Station Name`, "html", link = ifelse(nchar(ID)==7,
+                                            paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID),
+                                            paste0("https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", ID, "/DataSet/TW/Telemetry/Interval/Latest")))) %>%    dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
+                                                                                                                                                                                                                                          color = ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#B31F23", "#000000"))) %>%
     dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
-                                                                     color = ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#000000"))) %>%
+                                                                   color = ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#000000"))) %>%
     dplyr::arrange(desc(`Mean Max Daily Temp (last 7 days; deg C)`)) %>%
     kableExtra::kbl(format = "html", 
-          digits = 2, 
-          align = rep('c'), 
-          booktabs = T,
-          escape = F,
-          row.names = FALSE) %>%
-          #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
+                    digits = 2, 
+                    align = rep('c'), 
+                    booktabs = T,
+                    escape = F,
+                    row.names = FALSE) %>%
+    #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 }
 
@@ -903,22 +939,22 @@ The following table contains all of the drought-relevant statistics for all stat
 
 These statistics include:
 
-  - **Last 24 hour Discharge**: Mean discharge taken over the last 24 hours (in m^3^/s)
-  - **Percentile - Last 24 Hour Discharge**: Percentile of the average discharge over the last 24 hours
-  - **Latest 7 Day Discharge**: Rolling 7-day average of daily mean discharge for today's date. All 7 day means are calculated based on the past 7 days.
-  - **Percentile - 7 Day Discharge**:  Percentile of the rolling 7 day average of daily mean discharge measurements to the 7 day rolling mean of the historical daily values. 
-  - **Historic Mean 7 Day Discharge**: Value of the rolling 7-day averaged daily mean discharge value for today's date, calculated using the station's historic data (in m^3^/s).
-  - **Percent of Daily Mean 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the mean 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Mean 7 Day Discharge *100)
-  - **Historic Median 7 Day Discharge**: Value of the rolling 7-day averaged daily median discharge value for today's date, calculated using the station's historic data (in m^3^/s).
-  - **Percent of Daily Median 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the median 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Median 7 Day Discharge *100).
-  - **Historic Min 7 Day Discharge**: The minimum 7 day averaged mean daily discharge value for today's date within the historic record (in m^3^/s).
-  - **MAD (m^3^/s) and % MAD**: Flow needs during the  summer will range from juvenile rearing flows near 10-20% (preferred) MAD to adult salmon/char passage flows (>20% MAD) required prior to spawning.  Sub-standard flows (<10% MAD) can affect fish populations by reducing the area and quality of riffle habitats that generate fish food and aeration.  Flows nearing 5% MAD are considered sub-optimal for fish rearing and migration, indicate a degradation of instream habitat and may require restrictions on water use. 
-  - **Mean Max Daily Temp (last 7 days; deg C)**: Mean of the max daily temperatures from the past week. Temperatures greater than 20 degrees C can indicate increased stress on fish populations.
-  - **Max temp over last 24 hours (degC)**: Maximum temperature over the last 24 hours (degree C).
-  - **Dates above 23 degC and 20 degC in last 7 days**: Dates from the past week that the stream temperature has gone beyond either 20 or 23 degrees C.
-  
+- **Last 24 hour Discharge**: Mean discharge taken over the last 24 hours (in m^3^/s)
+- **Percentile - Last 24 Hour Discharge**: Percentile of the average discharge over the last 24 hours
+- **Latest 7 Day Discharge**: Rolling 7-day average of daily mean discharge for today's date. All 7 day means are calculated based on the past 7 days.
+- **Percentile - 7 Day Discharge**:  Percentile of the rolling 7 day average of daily mean discharge measurements to the 7 day rolling mean of the historical daily values. 
+- **Historic Mean 7 Day Discharge**: Value of the rolling 7-day averaged daily mean discharge value for today's date, calculated using the station's historic data (in m^3^/s).
+- **Percent of Daily Mean 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the mean 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Mean 7 Day Discharge *100)
+- **Historic Median 7 Day Discharge**: Value of the rolling 7-day averaged daily median discharge value for today's date, calculated using the station's historic data (in m^3^/s).
+- **Percent of Daily Median 7 Day Discharge**: Percent of the 7 Day Discharge for today's date compared to the median 7 Day Discharge value for today's date within the historic record of the station (i.e., Latest 7 Day Discharge/Historic Median 7 Day Discharge *100).
+- **Historic Min 7 Day Discharge**: The minimum 7 day averaged mean daily discharge value for today's date within the historic record (in m^3^/s).
+- **MAD (m^3^/s) and % MAD**: Flow needs during the  summer will range from juvenile rearing flows near 10-20% (preferred) MAD to adult salmon/char passage flows (>20% MAD) required prior to spawning.  Sub-standard flows (<10% MAD) can affect fish populations by reducing the area and quality of riffle habitats that generate fish food and aeration.  Flows nearing 5% MAD are considered sub-optimal for fish rearing and migration, indicate a degradation of instream habitat and may require restrictions on water use. 
+- **Mean Max Daily Temp (last 7 days; deg C)**: Mean of the max daily temperatures from the past week. Temperatures greater than 20 degrees C can indicate increased stress on fish populations.
+- **Max temp over last 24 hours (degC)**: Maximum temperature over the last 24 hours (degree C).
+- **Dates above 23 degC and 20 degC in last 7 days**: Dates from the past week that the stream temperature has gone beyond either 20 or 23 degrees C.
+
 **Regulation Status** refers to whether flows are natural or regulated by human activities such as dams; this (as well as the **Basin Area**) were determined by the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html).
-  
+
 Data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
 ```{r statstable}
@@ -937,55 +973,55 @@ table_all <- as.data.frame(table_out) %>%
                 `MAD Category` = MAD_bin,
                 `Percentile - 7 Day Discharge` = `Percentile - Q7`,
                 `Percentile - Last 24 Hour Discharge` = `Percentile - Last 24 Hour Q`
-                ) %>%
+  ) %>%
   dplyr::arrange(`Percentile - Last 24 Hour Discharge`, `Percentile - 7 Day Discharge`) %>%
   dplyr::rename(`Mean Max Daily Temp (last 7 days; deg C)` = `Mean max temp from last 7 days (degC)`)
-  
+
 
 if (params$table_format == "html"){
   table_all %>%
     dplyr::select(-Date) %>%
     dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
     dplyr::mutate(`Percentile Category - Last 24 Hour Discharge` = cell_spec(`Percentile Category - Last 24 Hour Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
-                                                           ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
-                                                              ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000"))))))))) %>%
+                                                                             color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
+                                                                                            ifelse(`Percentile Category - Last 24 Hour Discharge`  == "Low", "#F90010",
+                                                                                                   ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                                                                          ifelse(`Percentile Category - Last 24 Hour Discharge` == "Below Normal (10-24)" , "#FEA116", 
+                                                                                                                 ifelse(`Percentile Category - Last 24 Hour Discharge` == "Normal (25-75)" , "#228B22", 
+                                                                                                                        ifelse(`Percentile Category - Last 24 Hour Discharge` == "Above normal (76-90)" , "#46DED2", 
+                                                                                                                               ifelse(`Percentile Category - Last 24 Hour Discharge` == "Much above normal (>90)" , "#0003F6",
+                                                                                                                                      "#000000"))))))))) %>%
     dplyr::mutate(`Percentile Category - 7 Day Discharge` = cell_spec(`Percentile Category - 7 Day Discharge`, "html",
-                                            color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
-                                                           ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#000000",
-                                                             ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
-                                                               ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
-                                                                  ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
-                                                                         ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
-                                                                                ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
-                                                                                       ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
-                                                                                              "#000000")))))))))) %>%
+                                                                      color = ifelse(is.na(`Percentile Category - Last 24 Hour Discharge`), "#000000",
+                                                                                     ifelse(is.na(`Percentile Category - 7 Day Discharge`), "#000000",
+                                                                                            ifelse(`Percentile Category - 7 Day Discharge`  == "Low", "#F90010",
+                                                                                                   ifelse(`Percentile Category - 7 Day Discharge` == "Much below normal (<10)", "#B31F23" ,
+                                                                                                          ifelse(`Percentile Category - 7 Day Discharge` == "Below Normal (10-24)" , "#FEA116", 
+                                                                                                                 ifelse(`Percentile Category - 7 Day Discharge` == "Normal (25-75)" , "#228B22", 
+                                                                                                                        ifelse(`Percentile Category - 7 Day Discharge` == "Above normal (76-90)" , "#46DED2", 
+                                                                                                                               ifelse(`Percentile Category - 7 Day Discharge` == "Much above normal (>90)" , "#0003F6",
+                                                                                                                                      "#000000")))))))))) %>%
     dplyr::mutate(`% MAD` = cell_spec(`% MAD`, "html",
-                                    color = ifelse(is.na(`% MAD`), "#000000",
-                                             ifelse(`% MAD`  <= 5, "#F90010",
-                                              ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
+                                      color = ifelse(is.na(`% MAD`), "#000000",
+                                                     ifelse(`% MAD`  <= 5, "#F90010",
+                                                            ifelse(`% MAD` > 5 & `% MAD` <= 10, "#B31F23", "#000000"))))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
-                                                                     color = ifelse(is.na(`Mean Max Daily Temp (last 7 days; deg C)`), "#000000",
-                                                                       ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#F90010", "#0003F6")))) %>%
+                                                                         color = ifelse(is.na(`Mean Max Daily Temp (last 7 days; deg C)`), "#000000",
+                                                                                        ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#F90010", "#0003F6")))) %>%
     dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
                                                                    color = ifelse(is.na(`Max temp over last 24 hours (degC)`), "#000000",
-                                                                     ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#0003F6")))) %>%
+                                                                                  ifelse(`Max temp over last 24 hours (degC)`  >= 23, "#F90010", "#0003F6")))) %>%
     kableExtra::kbl(format = "html", 
-          digits = 2, 
-          align = rep('c'), 
-          booktabs = T,
-          escape = F,
-          row.names = FALSE) %>%
-          #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
+                    digits = 2, 
+                    align = rep('c'), 
+                    booktabs = T,
+                    escape = F,
+                    row.names = FALSE) %>%
+    #caption = paste0(params$region, " Low Flow Stations - ", date_annot)) %>%
     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
     column_spec(20, width = "3cm")
 }
-  
+
 ```
 \elandscape
 \newpage
