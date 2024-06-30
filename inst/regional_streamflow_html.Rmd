@@ -692,7 +692,6 @@ aq_temps <- bcdroughtstatistics::water_temp_aquarius(station_wt = wc_stns, as_dr
 
 
 table_out <- table_out %>% 
-table_stats_new <- table_stats_new %>% 
   bind_rows(aq_temps)
 
 # Maps - assemble data
