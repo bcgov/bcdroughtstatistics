@@ -317,7 +317,7 @@ table_stats_new <- table_out %>%
 ```
 This report contains low streamflow information for the `r params$region`. Please see the [Provincial Drought Portal](https://governmentofbc.maps.arcgis.com/apps/MapSeries/index.html?appid=838d533d8062411c820eef50b08f7ebc) for information about provincial conditions. Data is provided as is and may be unverified and uncorrected. Users assume all responsibility for use and interpretation of data within. 
 
-Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [waterresources@gov.bc.ca](mailto:waterresources@gov.bc.ca). 
+Data is sourced from the [Water Survey of Canada](https://www.canada.ca/en/environment-climate-change/services/water-overview/quantity/monitoring/survey.html) and [B.C. Real-time Data](https://aqrt.nrs.gov.bc.ca/Data), and was analyzed by the BC River Forecast Centre for the `r params$region`. Questions regarding data analysis can be sent to the [BC River Forecast Centre](mailto:Jon.Goetz@gov.bc.ca); questions regarding interpretation can be sent to [waterresources@gov.bc.ca](mailto:waterresources@gov.bc.ca). 
 
 This report was generated on `r format(Sys.time(), '%d %B %Y, %H:%M %p')`.
 
@@ -860,7 +860,13 @@ if (params$table_format == "html") {
                                     "Max temp over last 24 hours (deg C) = ", interactive_data$Max.temp.over.last.24.hours..degC., "<br>", 
                                     "Dates above 20degC (last 7 days) = ", interactive_data$Dates.above.20.degC.in.last.7.days, "<br>", 
                                     "Dates above 23degC (last 7 days) = ", interactive_data$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
+                                    ifelse(nchar(interactive_data$`ID`)==7,
+                                             paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                    interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                             paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                    interactive_data$`ID`, 
+                                                    "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                    "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
                      label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, 
                                      "; 7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                      options = pathOptions(pane = "All sites - 7 Day Mean Max Daily Temp")) %>%
@@ -876,7 +882,13 @@ if (params$table_format == "html") {
                                     "Max temp over last 24 hours (deg C) = ", interactive_data_20$Max.temp.over.last.24.hours..degC., "<br>", 
                                     "Dates above 20degC (last 7 days) = ", interactive_data_20$Dates.above.20.degC.in.last.7.days, "<br>", 
                                     "Dates above 23degC (last 7 days) = ", interactive_data_20$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_20$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
+                                    ifelse(nchar(interactive_data_20$`ID`)==7,
+                                             paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                    interactive_data_20$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                             paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                    interactive_data_20$`ID`, 
+                                                    "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                    "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
                      label = ~paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, 
                                      "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                      options = pathOptions(pane = ">20 Deg C - 7 Day Mean Max Daily Temp"))  %>%
@@ -892,7 +904,13 @@ if (params$table_format == "html") {
                                     "Max temp over last 24 hours (deg C) = ", interactive_data_23$Max.temp.over.last.24.hours..degC., "<br>", 
                                     "Dates above 20degC (last 7 days) = ", interactive_data_23$Dates.above.20.degC.in.last.7.days, "<br>", 
                                     "Dates above 23degC (last 7 days) = ", interactive_data_23$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                    ifelse(nchar(interactive_data_23$`ID`)==7,
+                                             paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                    interactive_data_23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                             paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                    interactive_data_23$`ID`, 
+                                                    "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                    "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
                      label = ~paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, 
                                      "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                      options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
@@ -915,7 +933,13 @@ if (params$table_format == "html") {
                                       "Max temp over last 24 hours (deg C) = ", interactive_data_max23$Max.temp.over.last.24.hours..degC., "<br>", 
                                       "Dates above 20degC (last 7 days) = ", interactive_data_max23$Dates.above.20.degC.in.last.7.days, "<br>", 
                                       "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days, "<br>",
-                                      "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_max23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                      ifelse(nchar(interactive_data_max23$`ID`)==7,
+                                             paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
+                                                    interactive_data_max23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                             paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
+                                                    interactive_data_max23$`ID`, 
+                                                    "/DataSet/TW/Telemetry/Interval/Latest", 
+                                                    "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
                        label = ~paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, 
                                        "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days),
                        options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  
