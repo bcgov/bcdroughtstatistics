@@ -947,7 +947,9 @@ watertemp <- watertemp %>%
 
 if (params$table_format == "html"){
   watertemp %>%
-    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
+    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = ifelse(nchar(ID)==7,
+                                                                                   paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID),
+                                                                                   paste0("https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", ID, "/DataSet/TW/Telemetry/Interval/Latest")))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
                                                                          color = ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#B31F23", "#000000"))) %>%
     # dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
@@ -976,7 +978,7 @@ The table below shows water temperatures specific to all of the lake sites withi
 
 laketemp <- table_out_temp %>%
   dplyr::select(-LATITUDE, -LONGITUDE, -temp_bin) %>%
-  dplyr::filter(ID %in% c("08LG046", "08NM083", "08NM143")) %>%
+  dplyr::filter(ID %in% c("08LG046", "08NM083", "08NM143","08NM0034")) %>%
   dplyr::rename(`Mean Max Daily Temp (last 7 days; deg C)` = `Mean max temp from last 7 days (degC)`) %>%
   dplyr::select(`Station Name`, ID, `Mean Max Daily Temp (last 7 days; deg C)`, 
                 `Max temp over last 24 hours (degC)`, `Min temp over last 24 hours (degC)`, `Mean temp over last 24 hours (degC)`, 
@@ -985,7 +987,9 @@ laketemp <- table_out_temp %>%
 
 if (params$table_format == "html") {
   laketemp %>%
-    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID))) %>%
+    dplyr::mutate(`Station Name` = cell_spec(`Station Name`, "html", link = ifelse(nchar(ID)==7,
+                                                                                   paste0("https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID),
+                                                                                   paste0("https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", ID, "/DataSet/TW/Telemetry/Interval/Latest")))) %>%
     dplyr::mutate(`Mean Max Daily Temp (last 7 days; deg C)` = cell_spec(`Mean Max Daily Temp (last 7 days; deg C)`, "html", 
                                                                          color = ifelse(`Mean Max Daily Temp (last 7 days; deg C)`  >= 20, "#B31F23", "#000000"))) %>%
     dplyr::mutate(`Max temp over last 24 hours (degC)` = cell_spec(`Max temp over last 24 hours (degC)`, "html", 
