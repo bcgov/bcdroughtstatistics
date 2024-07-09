@@ -195,13 +195,14 @@ water_temp_aquarius <- function(station_wt, as_drought_stats = TRUE) {
 
   if (as_drought_stats) {
     stn_info <- aq_data %>%
-      select(ID = STATION_NUMBER, "Station Name" = STATION_NAME, LATITUDE, LONGITUDE) %>%
-      distinct()
+      dplyr::select(ID = STATION_NUMBER, "Station Name" = STATION_NAME, LATITUDE, LONGITUDE) %>%
+      dplyr::distinct()
 
     temp_data_3 <- temp_data_3 %>%
-      rename(ID = STATION_NUMBER) %>%
-      left_join(stn_info,by = join_by(ID)) %>%
-      rename("Mean max temp from last 7 days (degC)" = maxtemp7daymean,
+      dplyr::rename(ID = STATION_NUMBER) %>%
+      dplyr::left_join(stn_info,by = dplyr::join_by(ID)) %>%
+      dplyr::filter(!is.na(maxtemp24hours))%>%
+      dplyr::rename("Mean max temp from last 7 days (degC)" = maxtemp7daymean,
              "Max temp over last 24 hours (degC)" = maxtemp24hours,
              "Min temp over last 24 hours (degC)" = mintemp24hours,
              "Mean temp over last 24 hours (degC)" = meantemp24hours,
