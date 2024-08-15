@@ -373,9 +373,9 @@ if (params$table_format == "html") {
   coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
   proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
   # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84")) %>% 
-    sf::st_as_sf()
-  #interactive_data <- data.frame(interactive_data)
+  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))# %>% 
+    #sf::st_as_sf()
+  interactive_data <- data.frame(interactive_data)
   
   # pal <- colorFactor(palette = naww_pal, domain = expected)
   #pal <- colorFactor(palette = c("#FFFFFF", "#F90010", "#B31F23", "#FEA116", "#228B22", 
@@ -578,9 +578,9 @@ if (params$table_format == "html") {
   coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
   proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
   # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84")) %>% 
-    sf::st_as_sf()
-  #interactive_data <- data.frame(interactive_data)
+  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84")) #%>% 
+   # sf::st_as_sf()
+  interactive_data <- data.frame(interactive_data)
   
   # Sites less that 20% MAD
   interactive_data_20_MAD <- interactive_data %>%
@@ -787,9 +787,9 @@ if (params$table_format == "html") {
   coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
   proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
   # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84")) %>% 
-    sf::st_as_sf()
-  # interactive_data <- data.frame(interactive_data)
+  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))# %>% 
+  #  sf::st_as_sf()
+   interactive_data <- data.frame(interactive_data)
   
   # Sites with a mean max daily temp over 20
   interactive_data_20 <- interactive_data %>%
