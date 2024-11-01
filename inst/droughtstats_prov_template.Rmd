@@ -68,7 +68,6 @@ library(purrr)
 library(ggspatial)
 library(ggrepel)
 library(magick)
-#library(ggsn)
 library(tidyhydat.ws)
 library(RColorBrewer)
 library(leaflet)
@@ -117,10 +116,8 @@ options(knitr.table.format = params$table_format)
 stns_sf <-  sf::st_as_sf(
   tidyhydat::realtime_stations(prov_terr_state_loc = "BC"),
   coords = c("LONGITUDE", "LATITUDE"),
-  crs = 4326,
-  agr = "constant"
-) %>%
-  bcmaps::transform_bc_albers()
+  crs = 4326
+)
 
 ```
 
@@ -134,15 +131,23 @@ stns_sf <-  sf::st_as_sf(
 # -------------------------------
 
 #Scrape current drought map using the scrape_drought_map() function
-drought <- bcdroughtstatistics::scrape_drought_map() %>%
-  as("Spatial") %>%
-  sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
-  sp::spTransform(CRS("+init=epsg:4326"))
+drought <- suppressWarnings(
+  suppressMessages(
+    esri2sf::esri2sf("https://services6.arcgis.com/ubm4tcTYICKBpist/ArcGIS/rest/services/British_Columbia_Drought_Levels_View/FeatureServer/1", where = "DroughtLevel >= 0", geomType = "esriGeometryPolygon") %>%
+      dplyr::rename(geometry = "geoms") %>%
+      as("Spatial") %>%
+      sp::spTransform(sp::CRS("+proj=longlat +datum=WGS84")) %>%
+      sp::spTransform(sp::CRS("+init=epsg:4326")) %>%
+      sf::st_as_sf()
+  )) %>% 
+  mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin="1970-01-01"),
+         DroughtLevel = gsub("Drought Level ","",DroughtLevel))
 
 ### Spatial Cleaning
 
 ## Choose the correct region
-nr_regions_sub <- dplyr::filter(bcmaps::nr_regions(), ORG_UNIT_NAME == params$region) 
+nr_regions_sub <- dplyr::filter(bcmaps::nr_regions(), ORG_UNIT_NAME == params$region)  %>%
+  st_transform(4326)
 
 # Find the drought polygons that fall within the region
 # Get only for the region
@@ -152,24 +157,24 @@ st_nr_regions_sub <- nr_regions_sub %>%
 st_spdf <- st_make_valid(st_as_sf(drought, 4326)) %>%
   st_transform(4326)
 
-spdf_select <- st_intersection(st_spdf, st_nr_regions_sub) %>%
-  as("Spatial") %>%
-  sp::spTransform(CRS("+proj=longlat +datum=WGS84")) %>%
-  sp::spTransform(CRS("+init=epsg:4326"))
+spdf_select <- st_intersection(st_spdf, st_nr_regions_sub) 
 
 ## Find the inters
-region_borders <- st_intersection(nr_regions_sub, bc_bound_hres()) 
+region_borders <- st_intersection(nr_regions_sub, bc_bound_hres() %>%
+  st_transform(4326)) 
 
-region_rivers <- st_intersection(nr_regions_sub, watercourses_5M())
+region_rivers <- st_intersection(nr_regions_sub, watercourses_5M() %>%
+  st_transform(4326))
 
-wsc_drainages <- ms_simplify(wsc_drainages())
+wsc_drainages <- ms_simplify(wsc_drainages() %>%
+  st_transform(4326))
 
 #region_watershed <- st_intersection(select(nr_regions_sub, SHAPE), wsc_drainages()) %>%
-region_watershed <- st_intersection(select(nr_regions_sub, geometry), wsc_drainages()) %>%
+region_watershed <- st_intersection(select(nr_regions_sub, geometry), wsc_drainages) %>%
   dplyr::group_by(SUB_DRAINAGE_AREA_NAME) %>%
   dplyr::summarise() 
 
-region_watershed_interactive <- st_transform(region_watershed, CRS("+init=epsg:4326")) # transform to Google Mercator projection
+region_watershed_interactive <- st_transform(region_watershed, crs = 4326) # transform to Google Mercator projection
 
 stns_region <- sf::st_join(stns_sf, nr_regions_sub, left = FALSE) 
 
@@ -192,8 +197,8 @@ basemap <- leaflet(width = "100%",
               fillColor = '#white', fillOpacity = 0, # completely opaque BC Provincial Drought Polygons for now
               highlightOptions = highlightOptions(color = '#00cccc', weight = 3,
                                                   bringToFront = FALSE),
-              label = ~spdf_select@data$BasinName,
-              popup = paste0("Drought Level = ", spdf_select@data$DroughtLevel), 
+              label = ~BasinName,
+              popup = ~paste0("Drought Level = ", DroughtLevel), 
               options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
   addPolygons(data = st_nr_regions_sub,
               group = "polygons",
@@ -406,13 +411,13 @@ if (params$table_format == "html") {
                      fillColor = ~pal(q7_per_thresh),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                                    "Seven Day Discharge (m3/s) = ", round(interactive_data$Latest.7.Day.Q..m3.s., digits = 2), "<br>", 
-                                    "Percentile: ", interactive_data$Percentile...Q7 ," | Category: ", interactive_data$q7_per_thresh, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"),
-                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, " ", interactive_data$q7_per_thresh),
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "Seven Day Discharge (m3/s) = ", round(`Latest 7 Day Q (m3/s)`, digits = 2), "<br>", 
+                                    "Percentile: ", `Percentile - Q7` ," | Category: ", q7_per_thresh, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", `ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"),
+                     label = ~paste0(`Station Name`,", ", `ID`, " ", q7_per_thresh),
                      options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
     # Last 24 hours 
     addCircleMarkers(data = interactive_data,
@@ -422,13 +427,13 @@ if (params$table_format == "html") {
                      fillColor = ~pal(q24_per_thresh),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                                    "Discharge Over Last 24 Hours (m3/s) = ", round(interactive_data$Last.24.hour.Q..m3.s., digits = 2), "<br>", 
-                                    "Percentile = ", round(interactive_data$Percentile...Last.24.Hour.Q, digits = 0), " | Category: ", interactive_data$q24_per_thresh, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
-                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, " ", interactive_data$q24_per_thresh),
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "Discharge Over Last 24 Hours (m3/s) = ", round(`Last 24 hour Q (m3/s)`, digits = 2), "<br>", 
+                                    "Percentile = ", round(`Percentile - Last 24 Hour Q`, digits = 0), " | Category: ", q24_per_thresh, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", `ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
+                     label = ~paste0(`Station Name`,", ", `ID`, " ", q24_per_thresh),
                      options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
     addLegend(colors = naww_pal,
               labels = drought_thresh, opacity = 1,
@@ -586,7 +591,7 @@ if (params$table_format == "html") {
   
   # Sites less that 20% MAD
   interactive_data_20_MAD <- interactive_data %>%
-    dplyr::filter(X..MAD <= 20)
+    dplyr::filter(`% MAD` <= 20)
   
   # pal <- colorFactor(palette = naww_pal, domain = expected)
   pal_MAD <- colorFactor(palette = naww_pal_MAD, levels = MAD_levels)
@@ -616,13 +621,13 @@ if (params$table_format == "html") {
                      fillColor = ~pal_MAD(MAD_bin),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                                    "% MAD = ", round(interactive_data$X..MAD, digits = 2), "<br>", 
-                                    "Percentile Category: ", interactive_data$MAD_bin, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
-                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD, digits = 2)),
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "% MAD = ", round(`% MAD`, digits = 2), "<br>", 
+                                    "Percentile Category: ", MAD_bin, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", `ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
+                     label = ~paste0(`Station Name`,", ", `ID`, "; % MAD = ", round(`% MAD`, digits = 2)),
                      options = pathOptions(pane = "All sites - % MAD")) %>%
     addCircleMarkers(data = interactive_data_20_MAD,
                      # lng = ~LONGITUDE, lat = ~LATITUDE,
@@ -631,13 +636,13 @@ if (params$table_format == "html") {
                      fillColor = ~pal_MAD(MAD_bin),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data_20_MAD$`Station.Name`,", ", interactive_data_20_MAD$`ID`, "<br>",
-                                    "% MAD = ", round(interactive_data_20_MAD$X..MAD, digits = 2), "<br>", 
-                                    "% MAD Category: ", interactive_data_20_MAD$MAD_bin, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data_20_MAD$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data_20_MAD$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data_20_MAD$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
-                     label = ~paste0(interactive_data_20_MAD$`Station.Name`,", ", interactive_data_20_MAD$`ID`, "; % MAD = ", round(interactive_data_20_MAD$X..MAD, digits = 2)),
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "% MAD = ", round(`% MAD`, digits = 2), "<br>", 
+                                    "% MAD Category: ", MAD_bin, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", `ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
+                     label = ~paste0(`Station Name`,", ", `ID`, "; % MAD = ", round(`% MAD`, digits = 2)),
                      options = pathOptions(pane = "Sites with % MAD < 20%")) %>%
     addCircleMarkers(data = interactive_data,
                      #  lng = ~LONGITUDE, lat = ~LATITUDE,
@@ -646,13 +651,13 @@ if (params$table_format == "html") {
                      fillColor = ~pal_MAD(MAD_bin_q24),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                                    "% MAD (from 24 hour Q) = ", round(interactive_data$X..MAD_Q_24hours, digits = 2), "<br>", 
-                                    "% MAD Category: ", interactive_data$MAD_bin_q24, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", interactive_data$`ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
-                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", interactive_data$`ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
-                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD_Q_24hours, digits = 2)),
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "% MAD (from 24 hour Q) = ", round(`% MAD_Q_24hours`, digits = 2), "<br>", 
+                                    "% MAD Category: ", MAD_bin_q24, "<br>",
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>", "<br>",
+                                    "<a href=\"", "http://bcrfc.env.gov.bc.ca/lowflow/elf/fig_", `ID`, ".htm", "\" target='_blank'>Link to RFC's ELF Forecast (new tab)</a>"), 
+                     label = ~paste0(`Station Name`,", ", `ID`, "; % MAD = ", round(`% MAD_Q_24hours`, digits = 2)),
                      options = pathOptions(pane = "All sites - % MAD (24 hour Q)")) %>%
     addLegend(colors = naww_pal_MAD,
               labels = MAD_levels, opacity = 1,
@@ -796,16 +801,16 @@ if (params$table_format == "html") {
   
   # Sites with a mean max daily temp over 20
   interactive_data_20 <- interactive_data %>%
-    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 20) %>%
-    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
+    dplyr::filter(`Mean Max Daily temp (last 7 days; deg C)` >= 20) %>%
+    dplyr::filter(`Mean Max Daily temp (last 7 days; deg C)` <= 200) 
   
   interactive_data_23 <- interactive_data %>%
-    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` >= 23) %>%
-    dplyr::filter(`Mean.Max.Daily.temp..last.7.days..deg.C.` <= 200) 
+    dplyr::filter(`Mean Max Daily temp (last 7 days; deg C)` >= 23) %>%
+    dplyr::filter(`Mean Max Daily temp (last 7 days; deg C)` <= 200) 
   
   # Data frame of sites that exheeded 23 degrees C
   interactive_data_max23 <- interactive_data %>%
-    dplyr::filter(!is.na("Dates.above.23.degC.in.last.7.days")) 
+    dplyr::filter(!is.na("Dates above 23 degC in last 7 days")) 
   
   # get colour palette
   naww_pal_temp <- c("#FFFFFF", # Npt ranked
@@ -816,7 +821,7 @@ if (params$table_format == "html") {
   temp_levels <- c("Not ranked", "<16 degC", "16 to 20", "20 to 23", "> or equal to 23")
   pal_temp <- colorFactor(palette = naww_pal_temp, levels = temp_levels)
   
-  region_watershed_interactive <- st_transform(region_watershed, CRS("+init=epsg:4326")) # transform to Google Mercator projection
+  region_watershed_interactive <- st_transform(region_watershed, crs = 4326) # transform to Google Mercator projection
   
   # Plot interactive plot
   temp_plot_1 <-  basemap %>%
@@ -843,20 +848,20 @@ if (params$table_format == "html") {
                      fillColor = ~pal_temp(temp_bin),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "<br>",
-                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                                    "Max temp over last 24 hours (deg C) = ", interactive_data$Max.temp.over.last.24.hours..degC., "<br>", 
-                                    "Dates above 20degC (last 7 days) = ", interactive_data$Dates.above.20.degC.in.last.7.days, "<br>", 
-                                    "Dates above 23degC (last 7 days) = ", interactive_data$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    ifelse(nchar(interactive_data$`ID`)==7,
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", `Max temp over last 24 hours (degC)`, "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", `Dates above 20 degC in last 7 days`, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", `Dates above 23 degC in last 7 days`, "<br>",
+                                    ifelse(nchar(`ID`)==7,
                                            paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
-                                                  interactive_data$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                                  `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
                                            paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
-                                                  interactive_data$`ID`, 
+                                                  `ID`, 
                                                   "/DataSet/TW/Telemetry/Interval/Latest", 
                                                   "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
-                     label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, 
-                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     label = ~paste0(`Station Name`,", ", `ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2)),
                      options = pathOptions(pane = "All sites - 7 Day Mean Max Daily Temp")) %>%
     addCircleMarkers(data = interactive_data_20,
                      # lng = ~LONGITUDE, lat = ~LATITUDE,
@@ -865,20 +870,20 @@ if (params$table_format == "html") {
                      fillColor = ~pal_temp(temp_bin),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, "<br>",
-                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                                    "Max temp over last 24 hours (deg C) = ", interactive_data_20$Max.temp.over.last.24.hours..degC., "<br>", 
-                                    "Dates above 20degC (last 7 days) = ", interactive_data_20$Dates.above.20.degC.in.last.7.days, "<br>", 
-                                    "Dates above 23degC (last 7 days) = ", interactive_data_20$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    ifelse(nchar(interactive_data_20$`ID`)==7,
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", `Max temp over last 24 hours (degC)`, "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", `Dates above 20 degC in last 7 days`, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", `Dates above 23 degC in last 7 days`, "<br>",
+                                    ifelse(nchar(`ID`)==7,
                                            paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
-                                                  interactive_data_20$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                                  `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
                                            paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
-                                                  interactive_data_20$`ID`, 
+                                                  `ID`, 
                                                   "/DataSet/TW/Telemetry/Interval/Latest", 
                                                   "\" target='_blank'>Link to realtime BC website (new tab)</a>"))), 
-                     label = ~paste0(interactive_data_20$`Station.Name`,", ", interactive_data_20$`ID`, 
-                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     label = ~paste0(`Station Name`,", ", `ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2)),
                      options = pathOptions(pane = ">20 Deg C - 7 Day Mean Max Daily Temp"))  %>%
     addCircleMarkers(data = interactive_data_23,
                      #  lng = ~LONGITUDE, lat = ~LATITUDE,
@@ -887,20 +892,20 @@ if (params$table_format == "html") {
                      fillColor = ~pal_temp(temp_bin),
                      fillOpacity = 1,
                      color = "black", opacity = 0.7, weight = 1.5,
-                     popup = paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, "<br>",
-                                    "7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                                    "Max temp over last 24 hours (deg C) = ", interactive_data_23$Max.temp.over.last.24.hours..degC., "<br>", 
-                                    "Dates above 20degC (last 7 days) = ", interactive_data_23$Dates.above.20.degC.in.last.7.days, "<br>", 
-                                    "Dates above 23degC (last 7 days) = ", interactive_data_23$Dates.above.23.degC.in.last.7.days, "<br>",
-                                    ifelse(nchar(interactive_data_23$`ID`)==7,
+                     popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                    "7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2), "<br>", 
+                                    "Max temp over last 24 hours (deg C) = ", `Max temp over last 24 hours (degC)`, "<br>", 
+                                    "Dates above 20degC (last 7 days) = ", `Dates above 20 degC in last 7 days`, "<br>", 
+                                    "Dates above 23degC (last 7 days) = ", `Dates above 23 degC in last 7 days`, "<br>",
+                                    ifelse(nchar(`ID`)==7,
                                            paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
-                                                  interactive_data_23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                                  `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
                                            paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
-                                                  interactive_data_23$`ID`, 
+                                                  `ID`, 
                                                   "/DataSet/TW/Telemetry/Interval/Latest", 
                                                   "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
-                     label = ~paste0(interactive_data_23$`Station.Name`,", ", interactive_data_23$`ID`, 
-                                     "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
+                     label = ~paste0(`Station Name`,", ", `ID`, 
+                                     "; 7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2)),
                      options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  %>%
     addLegend(colors = naww_pal_temp,
               labels = temp_levels, opacity = 1,
@@ -916,20 +921,20 @@ if (params$table_format == "html") {
                        fillColor = naww_pal_temp[5],
                        fillOpacity = 1,
                        color = "black", opacity = 0.7, weight = 1.5,
-                       popup = paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, "<br>",
-                                      "7 Day Max Daily Temp (degC) = ", round(interactive_data_max23$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2), "<br>", 
-                                      "Max temp over last 24 hours (deg C) = ", interactive_data_max23$Max.temp.over.last.24.hours..degC., "<br>", 
-                                      "Dates above 20degC (last 7 days) = ", interactive_data_max23$Dates.above.20.degC.in.last.7.days, "<br>", 
-                                      "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days, "<br>",
-                                      ifelse(nchar(interactive_data_max23$`ID`)==7,
+                       popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
+                                      "7 Day Max Daily Temp (degC) = ", round(`Mean Max Daily temp (last 7 days; deg C)`, digits = 2), "<br>", 
+                                      "Max temp over last 24 hours (deg C) = ", `Max temp over last 24 hours (degC)`, "<br>", 
+                                      "Dates above 20degC (last 7 days) = ", `Dates above 20 degC in last 7 days`, "<br>", 
+                                      "Dates above 23degC (last 7 days) = ", `Dates above 23 degC in last 7 days`, "<br>",
+                                      ifelse(nchar(`ID`)==7,
                                              paste0("<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", 
-                                                    interactive_data_max23$`ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                                    `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
                                              paste0("<a href=\"", "https://aqrt.nrs.gov.bc.ca/Data/DataSet/Chart/Location/", 
-                                                    interactive_data_max23$`ID`, 
+                                                    `ID`, 
                                                     "/DataSet/TW/Telemetry/Interval/Latest", 
                                                     "\" target='_blank'>Link to realtime BC website (new tab)</a>"))),
-                       label = ~paste0(interactive_data_max23$`Station.Name`,", ", interactive_data_max23$`ID`, 
-                                       "Dates above 23degC (last 7 days) = ", interactive_data_max23$Dates.above.23.degC.in.last.7.days),
+                       label = ~paste0(`Station Name`,", ", `ID`, 
+                                       "Dates above 23degC (last 7 days) = ", `Dates above 23 degC in last 7 days`),
                        options = pathOptions(pane = ">23 Deg C - 7 Day Mean Max Daily Temp"))  
   } else {
     temp_plot_2 <- temp_plot_1
