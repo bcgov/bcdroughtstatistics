@@ -40,8 +40,7 @@ Suggests:
     ggspatial,
     ggrepel,
     magick,
-    shadowtext,
-    ggsn
+    shadowtext
 Additional_repositories: https://bcgov.github.io/drat
 Remotes:
     yonghah/esri2sf

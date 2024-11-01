@@ -68,7 +68,7 @@ library(purrr)
 library(ggspatial)
 library(ggrepel)
 library(magick)
-library(ggsn)
+#library(ggsn)
 library(tidyhydat.ws)
 library(RColorBrewer)
 library(leaflet)
@@ -364,7 +364,7 @@ if (params$table_format == "latex") {
                     colour = "black",
                     bg.colour = "white"
     ) +
-    annotation_north_arrow(location = "bl", which_north = "grid", pad_x = unit(1, "cm"), pad_y = unit(9, "cm")) +
+    #annotation_north_arrow(location = "bl", which_north = "grid", pad_x = unit(1, "cm"), pad_y = unit(9, "cm")) +
     #annotation_raster(bc_logo, 1987.509, 2283.774, 1771.908, 1790.425) +
     theme_void() +
     theme(panel.background = element_rect(fill = "aliceblue"),
