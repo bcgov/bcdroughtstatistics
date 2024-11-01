@@ -384,14 +384,15 @@ if (params$table_format == "html") {
   
   # Configure the right format for the interactive map
   interactive_data <- table_stats_new %>%
-    dplyr::filter(!is.na(pct_bin_7day)) 
+    dplyr::filter(!is.na(pct_bin_7day))  %>% 
+    st_as_sf(coords = c("LONGITUDE","LATITUDE"), crs = 4326, remove = FALSE)
   
   # Set datum
-  coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
-  proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
-  # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
-  interactive_data <- data.frame(interactive_data)
+  # coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
+  # proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
+  # # transform to Google Mercator projection
+  # interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
+  # interactive_data <- data.frame(interactive_data)
   
   # pal <- colorFactor(palette = naww_pal, domain = expected)
   #pal <- colorFactor(palette = c("#FFFFFF", "#F90010", "#B31F23", "#FEA116", "#228B22", 
@@ -415,7 +416,7 @@ if (params$table_format == "html") {
                                        "BC Provincial Drought Polygons"),
                      options = layersControlOptions(collapsed = T)) %>%
     addCircleMarkers(data = interactive_data,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "Streamflow - Seven Day Percentiles",
                      radius = 5,
                      fillColor = ~pal(q7_per_thresh),
@@ -431,7 +432,7 @@ if (params$table_format == "html") {
                      options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
     # Last 24 hours 
     addCircleMarkers(data = interactive_data,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "Streamflow - Last 24 Hour Percentiles",
                      radius = 5,
                      fillColor = ~pal(q24_per_thresh),
@@ -588,14 +589,15 @@ if (params$table_format == "html") {
   
   # Configure the right format for the interactive map
   interactive_data <- table_MAD %>%
-    dplyr::filter(!is.na(LONGITUDE))
+    dplyr::filter(!is.na(LONGITUDE)) %>% 
+    st_as_sf(coords = c("LONGITUDE","LATITUDE"), crs = 4326, remove = FALSE)
   
   # Set datum
-  coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
-  proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
-  # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
-  interactive_data <- data.frame(interactive_data)
+  # coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
+  # proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
+  # # transform to Google Mercator projection
+  # interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
+  # interactive_data <- data.frame(interactive_data)
   
   # Sites less that 20% MAD
   interactive_data_20_MAD <- interactive_data %>%
@@ -623,7 +625,7 @@ if (params$table_format == "html") {
                                        "BC Provincial Drought Polygons"),
                      options = layersControlOptions(collapsed = F)) %>%
     addCircleMarkers(data = interactive_data,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "All sites - % MAD",
                      radius = 5,
                      fillColor = ~pal_MAD(MAD_bin),
@@ -638,7 +640,7 @@ if (params$table_format == "html") {
                      label = ~paste0(interactive_data$`Station.Name`,", ", interactive_data$`ID`, "; % MAD = ", round(interactive_data$X..MAD, digits = 2)),
                      options = pathOptions(pane = "All sites - % MAD")) %>%
     addCircleMarkers(data = interactive_data_20_MAD,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "Sites with % MAD < 20%",
                      radius = 5,
                      fillColor = ~pal_MAD(MAD_bin),
@@ -653,7 +655,7 @@ if (params$table_format == "html") {
                      label = ~paste0(interactive_data_20_MAD$`Station.Name`,", ", interactive_data_20_MAD$`ID`, "; % MAD = ", round(interactive_data_20_MAD$X..MAD, digits = 2)),
                      options = pathOptions(pane = "Sites with % MAD < 20%")) %>%
     addCircleMarkers(data = interactive_data,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "All sites - % MAD (24 hour Q)",
                      radius = 5,
                      fillColor = ~pal_MAD(MAD_bin_q24),
@@ -797,14 +799,15 @@ if (params$table_format == "html") {
   
   # Configure the right format for the interactive map
   interactive_data <- watertemp_all %>%
-    dplyr::filter(!is.na(LONGITUDE))
+    dplyr::filter(!is.na(LONGITUDE)) %>% 
+    st_as_sf(coords = c("LONGITUDE","LATITUDE"), crs = 4326, remove = FALSE)
   
   # Set datum
-  coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
-  proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
-  # transform to Google Mercator projection
-  interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
-  interactive_data <- data.frame(interactive_data)
+  # coordinates(interactive_data) <- ~LONGITUDE+LATITUDE
+  # proj4string(interactive_data) <- CRS("+proj=longlat +datum=WGS84")
+  # # transform to Google Mercator projection
+  # interactive_data <- spTransform(interactive_data, CRS("+proj=longlat +datum=WGS84"))
+  # interactive_data <- data.frame(interactive_data)
   
   # Sites with a mean max daily temp over 20
   interactive_data_20 <- interactive_data %>%
@@ -849,7 +852,7 @@ if (params$table_format == "html") {
                                        "BC Provincial Drought Polygons"),
                      options = layersControlOptions(collapsed = F)) %>%
     addCircleMarkers(data = interactive_data,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = "All sites - 7 Day Mean Max Daily Temp",
                      radius = 5,
                      fillColor = ~pal_temp(temp_bin),
@@ -871,7 +874,7 @@ if (params$table_format == "html") {
                                      "; 7 Day Max Daily Temp (degC) = ", round(interactive_data$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                      options = pathOptions(pane = "All sites - 7 Day Mean Max Daily Temp")) %>%
     addCircleMarkers(data = interactive_data_20,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = ">20 Deg C - 7 Day Mean Max Daily Temp",
                      radius = 5,
                      fillColor = ~pal_temp(temp_bin),
@@ -893,7 +896,7 @@ if (params$table_format == "html") {
                                      "; 7 Day Max Daily Temp (degC) = ", round(interactive_data_20$Mean.Max.Daily.temp..last.7.days..deg.C., digits = 2)),
                      options = pathOptions(pane = ">20 Deg C - 7 Day Mean Max Daily Temp"))  %>%
     addCircleMarkers(data = interactive_data_23,
-                     lng = ~LONGITUDE, lat = ~LATITUDE,
+                     # lng = ~LONGITUDE, lat = ~LATITUDE,
                      group = ">23 Deg C - 7 Day Mean Max Daily Temp",
                      radius = 5,
                      fillColor = ~pal_temp(temp_bin),
@@ -922,7 +925,7 @@ if (params$table_format == "html") {
   if (dim(interactive_data_23)[1] > 0) {
     temp_plot_2 <- temp_plot_1 %>%
       addCircleMarkers(data = interactive_data_max23,
-                       lng = ~LONGITUDE, lat = ~LATITUDE,
+                       # lng = ~LONGITUDE, lat = ~LATITUDE,
                        group = ">23 Deg C - Max Temp (Last 7 Days)",
                        radius = 5,
                        fillColor = naww_pal_temp[5],
