@@ -148,8 +148,8 @@ drought <- suppressWarnings(
          DroughtLevel = gsub("Drought Level ","",DroughtLevel))
 
 drought_sf <-  drought %>% 
-  filter(BasinName %in% c("Similkameen","Okanagan","North Thompson","South Thompson","Salmon River",
-                          "Coldwater River","Lower Thompson","Nicola"))
+  filter(BasinName %in% c("Similkameen","Okanagan","North Thompson","South Thompson",
+                          "Lower Thompson","Nicola"))
 
 ### Spatial Cleaning
 
@@ -209,16 +209,16 @@ basemap <- leaflet(width = "100%",
                                                   bringToFront = FALSE),
               label = ~BasinName,
               popup = ~paste0("Drought Level = ", DroughtLevel), 
-              options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
-  addPolygons(data = region_watershed_interactive,
-              group = "polygons",
-              weight = 3,
-              color = 'black',
-              fillColor = 'beige', fillOpacity = 0, 
-              highlightOptions = highlightOptions(color = "black", weight = 3,
-                                                  bringToFront = FALSE),
-              label = params$region,
-              options = pathOptions(pane = "polygons"))
+              options = pathOptions(pane = "BC Provincial Drought Polygons"))#  %>%
+  # addPolygons(data = region_watershed_interactive,
+  #             group = "polygons",
+  #             weight = 3,
+  #             color = 'black',
+  #             fillColor = 'beige', fillOpacity = 0, 
+  #             highlightOptions = highlightOptions(color = "black", weight = 3,
+  #                                                 bringToFront = FALSE),
+  #             label = params$region,
+  #             options = pathOptions(pane = "polygons"))
 
 ```
 
