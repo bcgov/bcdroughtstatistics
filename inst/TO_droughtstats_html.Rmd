@@ -120,8 +120,7 @@ stns_sf <-  sf::st_as_sf(
   coords = c("LONGITUDE", "LATITUDE"),
   crs = 4326,
   agr = "constant"
-) %>%
-  bcmaps::transform_bc_albers()
+)
 
 ```
 
@@ -209,16 +208,16 @@ basemap <- leaflet(width = "100%",
                                                   bringToFront = FALSE),
               label = ~BasinName,
               popup = ~paste0("Drought Level = ", DroughtLevel), 
-              options = pathOptions(pane = "BC Provincial Drought Polygons"))#  %>%
-  # addPolygons(data = region_watershed_interactive,
-  #             group = "polygons",
-  #             weight = 3,
-  #             color = 'black',
-  #             fillColor = 'beige', fillOpacity = 0, 
-  #             highlightOptions = highlightOptions(color = "black", weight = 3,
-  #                                                 bringToFront = FALSE),
-  #             label = params$region,
-  #             options = pathOptions(pane = "polygons"))
+              options = pathOptions(pane = "BC Provincial Drought Polygons"))  %>%
+  addPolygons(data = st_nr_regions_sub,
+              group = "polygons",
+              weight = 3,
+              color = 'black',
+              fillColor = 'beige', fillOpacity = 0, 
+              highlightOptions = highlightOptions(color = "black", weight = 3,
+                                                  bringToFront = FALSE),
+              label = params$region,
+              options = pathOptions(pane = "polygons"))
 
 ```
 
