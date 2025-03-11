@@ -17,7 +17,7 @@
 #' @keywords water temperature functions
 #' @export
 #' @examples \dontrun{}
-#' @return Returns the temperature data for sites retrieved from tidyhydat.ws
+#' @return Returns the temperature data for sites retrieved from tidyhydat
 
 water_temp <- function(station_wt) {
   # ======================
@@ -25,7 +25,6 @@ water_temp <- function(station_wt) {
   library(tidyhydat)
   temp_station_initial <- realtime_ws(
     station_number = station_wt,
-   # token = tidyhydat.ws::token_ws(),
     parameters = 5
   ) %>%
     dplyr::filter(Code == "TW") %>%
@@ -105,7 +104,7 @@ water_temp <- function(station_wt) {
 #' @keywords water temperature functions
 #' @export
 #' @examples \dontrun{}
-#' @return Returns the temperature data for sites retrieved from tidyhydat.ws
+#' @return Returns the temperature data for sites retrieved from tidyhydat
 
 water_temp_aquarius <- function(station_wt, as_drought_stats = TRUE) {
 

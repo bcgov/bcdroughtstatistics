@@ -10,7 +10,7 @@ water_temp(station_wt)
 \item{station_wt}{Stations that you want to calculate drought-relevant statistics for. Function will also retrieve data itself}
 }
 \value{
-Returns the temperature data for sites retrieved from tidyhydat.ws
+Returns the temperature data for sites retrieved from tidyhydat
 }
 \description{
 Function for getting stream and lake temperatures from the WS sites
