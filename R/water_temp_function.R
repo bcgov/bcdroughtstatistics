@@ -22,9 +22,10 @@
 water_temp <- function(station_wt) {
   # ======================
   # Add in the temperature
-  temp_station_initial <- tidyhydat.ws::realtime_ws(
+  library(tidyhydat)
+  temp_station_initial <- realtime_ws(
     station_number = station_wt,
-    token = tidyhydat.ws::token_ws(),
+   # token = tidyhydat.ws::token_ws(),
     parameters = 5
   ) %>%
     dplyr::filter(Code == "TW") %>%
