@@ -20,7 +20,7 @@
 #' @return Returns the polygons and drought levels from the current BC Drought Portal
 #' scrape_drought_map()
 scrape_drought_map <- function() {
-  url <- "https://services6.arcgis.com/ubm4tcTYICKBpist/ArcGIS/rest/services/British_Columbia_Drought_Levels_View/FeatureServer/1"
+  url <- "https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/ArcGIS/rest/services/British_Columbia_Drought_Levels_(Edit)_view/FeatureServer/27"
   drought <- esri2sf::esri2sf(url, where = "DroughtLevel >= 0", outFields = c("DroughtLevel"), geomType = "esriGeometryPolygon") %>%
     dplyr::rename(geometry = "geoms") %>%
     as("Spatial") %>%

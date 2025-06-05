@@ -135,7 +135,7 @@ stns_sf <-  sf::st_as_sf(
 #Scrape current drought map using the scrape_drought_map() function
 drought <- suppressWarnings(
   suppressMessages(
-    esri2sf::esri2sf("https://services6.arcgis.com/ubm4tcTYICKBpist/ArcGIS/rest/services/British_Columbia_Drought_Levels_View/FeatureServer/1", where = "DroughtLevel >= 0", geomType = "esriGeometryPolygon") %>%
+    esri2sf::esri2sf("https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/ArcGIS/rest/services/British_Columbia_Drought_Levels_(Edit)_view/FeatureServer/27", where = "DroughtLevel >= 0", geomType = "esriGeometryPolygon") %>%
       dplyr::rename(geometry = "geoms") %>%
       as("Spatial") %>%
       sp::spTransform(sp::CRS("+proj=longlat +datum=WGS84")) %>%
