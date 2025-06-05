@@ -147,7 +147,7 @@ drought <- suppressWarnings(
 
 drought_sf <-  drought %>% 
   filter(BasinName %in% c("Similkameen","Okanagan","North Thompson","South Thompson",
-                          "Lower Thompson","Nicola"))
+                          "Lower Thompson","Nicola","Bridge"))
 
 ### Spatial Cleaning
 
