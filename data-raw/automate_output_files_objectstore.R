@@ -17,6 +17,8 @@ basins <- c("Cariboo Natural Resource Region",
 save_location <- normalizePath("output/", mustWork = FALSE)
 dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
 save_location <- paste0(save_location,"\\")
+save_location <- gsub("\\\\", "/", save_location)
+
 
 # # save files using render_function
 # # tryCatch({
