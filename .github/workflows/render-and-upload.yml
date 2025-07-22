@@ -45,6 +45,7 @@ jobs:
         with:
           packages: |
             any::rmarkdown
+            any::remotes
 
       - name: Install bcdroughtstatistics
         run: Rscript -e 'remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)'
