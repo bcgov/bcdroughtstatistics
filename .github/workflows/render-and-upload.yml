@@ -43,6 +43,9 @@ jobs:
       - name: Install bcdroughtstatistics
         run: Rscript -e 'pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))'
 
+      - name: Set working directory
+        run: cd $GITHUB_WORKSPACE
+
       - name: Run forecasting R script
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
