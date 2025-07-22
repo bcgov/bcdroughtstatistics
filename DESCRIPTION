@@ -34,12 +34,14 @@ Imports:
     tidyhydat,
     esri2sf,
     rlang,
-    drat
-Suggests: 
+    drat,
+    rmapshaper,
+    kableExtra,
     ggspatial,
-    ggrepel,
-    magick,
     shadowtext
+Suggests: 
+    ggrepel,
+    magick
 Additional_repositories: https://bcgov.github.io/drat
 Remotes:
     yonghah/esri2sf
