@@ -1,0 +1,58 @@
+name: Render low streamflow reports and put to object store
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Daily at noonish Pacific (20:00 UTC)
+  push:
+    branches: [main]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    environment: rfc_env #name of the Github environment where the secrets are stored
+    env:
+      R_LIBS_USER: ~/.local/share/R/library
+      TZ: America/Vancouver
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Cache R packages # Cache R packages to speed up future runs
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/R/library
+          key: ${{ runner.os }}-r-pkgs-v1
+
+      # - name: Install system dependencies for TinyTeX
+      #   run: |
+      #    sudo apt-get update
+      #    sudo apt-get install -y \
+      #      libglpk-dev \
+      #      fonts-liberation \
+      #      libgdal-dev \
+      #      libproj-dev \
+      #      libgeos-dev \
+      #      libsqlite3-dev \
+      #      libudunits2-dev \
+
+
+      - name: Install packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::rmarkdown
+
+      - name: Install bcdroughtstatistics
+        run: Rscript -e 'remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)'
+
+      - name: Run forecasting R script
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
+        run: Rscript -e 'source("data-raw/automate_output_files_objectstore.R")'
+
