@@ -45,10 +45,10 @@ jobs:
         with:
           packages: |
             any::rmarkdown
-            any::remotes
+            any::pak
 
       - name: Install bcdroughtstatistics
-        run: Rscript -e 'remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)'
+        run: Rscript -e 'pak::pak("ropensci/weathercan", lib = Sys.getenv("R_LIBS_USER"))'
 
       - name: Run forecasting R script
         env:
