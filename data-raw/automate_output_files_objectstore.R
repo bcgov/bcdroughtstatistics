@@ -14,9 +14,10 @@ basins <- c("Cariboo Natural Resource Region",
             "West Coast Natural Resource Region")
 
 # Create output folder
-save_location <- file.path("output//")
+save_location <- "output/"  # string, not file.path()
 save_location <- normalizePath(save_location, mustWork = FALSE)
 dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
+save_location <- paste0(save_location,"\\")
 
 # # save files using render_function
 # # tryCatch({
