@@ -39,6 +39,6 @@ render_function_wc <- function(basin, save_loc = "directory") {
   # Run RMarkdown file
     rmarkdown::render(system.file("regional_streamflow_html.Rmd", package = "bcdroughtstatistics"),
                     params = list(region = basin),
-                    output_file = paste0(save_loc_f, gsub(" ", "", basin)  ,  ".html"))
+                    output_file = file.path(save_loc_f, paste0(gsub(" ", "", basin), ".html")))
 
 }
