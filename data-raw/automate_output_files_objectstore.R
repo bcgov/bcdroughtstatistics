@@ -12,40 +12,40 @@ basins <- c("Cariboo Natural Resource Region",
             "South Coast Natural Resource Region",
             "Thompson-Okanagan Natural Resource Region",
             "West Coast Natural Resource Region")
-
-save_location <- "output/"
-dir.create(save_location)
-
-# save files using render_function
-# tryCatch({
-bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = save_location)
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location) #"Kootenay-Boundary Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[3], save_loc = save_location) #"Northeast Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[4], save_loc = save_location) #"Omineca Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location)
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[5], save_loc = save_location) # "Skeena Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[1], save_loc = save_location) #"Cariboo Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location) #"South Coast Natural Resource Region"
-# }, error = function(e) {
-# })
+#
+# save_location <- "output/"
+# dir.create(save_location)
+#
+# # save files using render_function
+# # tryCatch({
+# bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = save_location)
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location) #"Kootenay-Boundary Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[3], save_loc = save_location) #"Northeast Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[4], save_loc = save_location) #"Omineca Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location)
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[5], save_loc = save_location) # "Skeena Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[1], save_loc = save_location) #"Cariboo Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location) #"South Coast Natural Resource Region"
+# # }, error = function(e) {
+# # })
