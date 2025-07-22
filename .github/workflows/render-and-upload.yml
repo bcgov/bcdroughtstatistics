@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 12 * * *'  # Daily at noonish Pacific (20:00 UTC)
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   render:
