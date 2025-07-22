@@ -27,18 +27,11 @@ jobs:
           path: ~/.local/share/R/library
           key: ${{ runner.os }}-r-pkgs-v1
 
-      # - name: Install system dependencies for TinyTeX
-      #   run: |
-      #    sudo apt-get update
-      #    sudo apt-get install -y \
-      #      libglpk-dev \
-      #      fonts-liberation \
-      #      libgdal-dev \
-      #      libproj-dev \
-      #      libgeos-dev \
-      #      libsqlite3-dev \
-      #      libudunits2-dev \
-
+      - name: Install system dependencies
+        run: |
+         sudo apt-get update
+         sudo apt-get install -y \
+           libcurl4-openssl-dev \
 
       - name: Install packages
         uses: r-lib/actions/setup-r-dependencies@v2
