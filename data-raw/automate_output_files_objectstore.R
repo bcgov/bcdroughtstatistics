@@ -13,12 +13,12 @@ basins <- c("Cariboo Natural Resource Region",
             "Thompson-Okanagan Natural Resource Region",
             "West Coast Natural Resource Region")
 #
-# save_location <- "output/"
-# dir.create(save_location)
+save_location <- file.path("output//")
+dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
 #
 # # save files using render_function
 # # tryCatch({
-# bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = save_location)
+bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = save_location)
 # # }, error = function(e) {
 # # })
 # # tryCatch({
