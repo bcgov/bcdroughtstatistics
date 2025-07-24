@@ -101,5 +101,25 @@ render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_
 # # })
 
 
+library(aws.s3)
 
+# Set your bucket and directory
+bucket_name <- "rfc-conditions/drought_reports"
+region <- ""
+
+# Authenticate (these are read from env vars set in GitHub Actions)
+Sys.setenv("AWS_ACCESS_KEY_ID" = Sys.getenv("AWS_ACCESS_KEY_ID"))
+Sys.setenv("AWS_SECRET_ACCESS_KEY" = Sys.getenv("AWS_SECRET_ACCESS_KEY"))
+Sys.setenv("AWS_DEFAULT_REGION" = region)
+
+# Upload all HTML files in the directory
+files <- list.files(save_location, full.names = TRUE, pattern = "\\.html$")
+for (file in files) {
+  object_name <- basename(file)
+  put_object(file = file,
+             object = object_name,
+             region = region,
+             bucket = bucket_name,
+             acl = "public-read")
+}
 
