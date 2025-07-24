@@ -27,6 +27,12 @@ jobs:
           path: ~/.local/share/R/library
           key: ${{ runner.os }}-r-pkgs-v1
 
+      - name: Cache HYDAT database
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/R/tidyhydat
+          key: hydat-cache-v1
+
       - name: Install system dependencies
         run: |
          sudo apt-get update
