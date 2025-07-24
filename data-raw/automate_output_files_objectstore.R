@@ -2,27 +2,26 @@
 # Install from github instead of from .tar file
 # remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)
 
-# library(tidyhydat)
-#
-# # Path where tidyhydat downloads HYDAT by default
-# hydat_path <- tidyhydat::hy_default_db()
-#
-# # Check if file exists
-# if (!file.exists(hydat_path)) {
-#   message("HYDAT not found. Downloading...")
-#   tidyhydat::download_hydat(ask = FALSE)
-# } else {
-#   # Optional: check if the file is older than 3 months
-#   age_days <- as.numeric(Sys.Date() -as.Date(file.info(hydat_path)$mtime))
-#   if (age_days > 30) {
-#     message("HYDAT is older than 3 months. Re-downloading...")
-#     tidyhydat::download_hydat(ask = FALSE)
-#   } else {
-#     message("HYDAT is up-to-date.")
-#   }
-# }
-#
-#
+
+# Path where tidyhydat downloads HYDAT by default
+hydat_path <- tidyhydat::hy_default_db()
+
+# Check if file exists
+if (!file.exists(hydat_path)) {
+  message("HYDAT not found. Downloading...")
+  tidyhydat::download_hydat(ask = FALSE)
+} else {
+  # Optional: check if the file is older than 3 months
+  age_days <- as.numeric(Sys.Date() - as.Date(file.info(hydat_path)$mtime))
+  if (age_days > 30) {
+    message("HYDAT is older than 3 months. Re-downloading...")
+    tidyhydat::download_hydat(ask = FALSE)
+  } else {
+    message("HYDAT is up-to-date.")
+  }
+}
+
+
 # library(bcdroughtstatistics)
 #
 # basins <- c("Cariboo Natural Resource Region",
