@@ -22,16 +22,16 @@ if (!file.exists(hydat_path)) {
 }
 
 
-# library(bcdroughtstatistics)
-#
-# basins <- c("Cariboo Natural Resource Region",
-#             "Kootenay-Boundary Natural Resource Region",
-#             "Northeast Natural Resource Region",
-#             "Omineca Natural Resource Region",
-#             "Skeena Natural Resource Region",
-#             "South Coast Natural Resource Region",
-#             "Thompson-Okanagan Natural Resource Region",
-#             "West Coast Natural Resource Region")
+library(bcdroughtstatistics)
+
+basins <- c("Cariboo Natural Resource Region",
+            "Kootenay-Boundary Natural Resource Region",
+            "Northeast Natural Resource Region",
+            "Omineca Natural Resource Region",
+            "Skeena Natural Resource Region",
+            "South Coast Natural Resource Region",
+            "Thompson-Okanagan Natural Resource Region",
+            "West Coast Natural Resource Region")
 
 # Create output folder
 # save_location <- normalizePath("output/", mustWork = FALSE)
@@ -51,7 +51,7 @@ dir.create(save_location)
 
 # # save files using render_function
 # # tryCatch({
-# render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
+render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
 # # }, error = function(e) {
 # # })
 # # tryCatch({
