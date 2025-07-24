@@ -1,9 +1,17 @@
+# Copyright 2025 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
 
-# Install from github instead of from .tar file
-# remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)
 
-
-## LOAD CRAN PACKAGES --------------------------------------------------
+## Packages
 pkgs <- c(
   'pak',
   'aws.s3'
@@ -15,13 +23,14 @@ new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, lib = Sys.getenv("R_LIBS_USER"))
 
 
+## bcdroughtstatistics package
 pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))
 
 
 
+## Install HYDAT, if necessary
 
-# Path where tidyhydat downloads HYDAT by default
-hydat_path <- tidyhydat::hy_default_db()
+hydat_path <- tidyhydat::hy_default_db()# Path where tidyhydat downloads HYDAT by default
 
 # Check if file exists
 if (!file.exists(hydat_path)) {
@@ -51,18 +60,6 @@ basins <- c("Cariboo Natural Resource Region",
             "West Coast Natural Resource Region")
 
 # Create output folder
-# save_location <- normalizePath("output/", mustWork = FALSE)
-# dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
-# save_location <- paste0(save_location,"\\")
-# save_location <- gsub("\\\\", "/", save_location)
-
-# save_location <- file.path(normalizePath("output", mustWork = FALSE), "")
-# dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
-
-# save_location <- normalizePath("output", mustWork = FALSE)
-# dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
-# print(save_location)
-
 save_location <- tempfile("bcdrought_", tmpdir = tempdir())
 dir.create(save_location)
 
@@ -101,6 +98,7 @@ render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_
 # # })
 
 
+## Put html files to objectstore
 library(aws.s3)
 
 # Set your bucket and directory
