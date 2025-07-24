@@ -22,13 +22,16 @@ basins <- c("Cariboo Natural Resource Region",
 # save_location <- file.path(normalizePath("output", mustWork = FALSE), "")
 # dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
 
-save_location <- normalizePath("output", mustWork = FALSE)
-dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
-print(save_location)
+# save_location <- normalizePath("output", mustWork = FALSE)
+# dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
+# print(save_location)
+
+save_location <- tempfile("bcdrought_", tmpdir = tempdir())
+dir.create(save_location)
 
 # # save files using render_function
 # # tryCatch({
-bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = save_location)
+bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
 # # }, error = function(e) {
 # # })
 # # tryCatch({
