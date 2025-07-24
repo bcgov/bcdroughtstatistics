@@ -54,10 +54,6 @@ jobs:
         with:
           packages: |
             any::rmarkdown
-            any::pak
-
-      - name: Install bcdroughtstatistics
-        run: Rscript -e 'pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))'
 
       - name: Run forecasting R script
         env:

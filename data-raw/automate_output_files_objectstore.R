@@ -3,6 +3,23 @@
 # remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)
 
 
+## LOAD CRAN PACKAGES --------------------------------------------------
+pkgs <- c(
+  'pak',
+  'aws.s3',
+)
+
+#Queries and installs missing packages
+# options(timeout = 1200)
+new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages, lib = Sys.getenv("R_LIBS_USER"))
+
+
+pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))
+
+
+
+
 # Path where tidyhydat downloads HYDAT by default
 hydat_path <- tidyhydat::hy_default_db()
 
@@ -82,3 +99,7 @@ render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_
 # bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location) #"South Coast Natural Resource Region"
 # # }, error = function(e) {
 # # })
+
+
+
+
