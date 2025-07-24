@@ -10,6 +10,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+## Options and settings
+Sys.setenv(TZ = "America/Vancouver")
+
 
 ## Packages
 pkgs <- c(
@@ -25,7 +28,6 @@ if(length(new.packages)) install.packages(new.packages, lib = Sys.getenv("R_LIBS
 
 ## bcdroughtstatistics package
 pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))
-
 
 
 ## Install HYDAT, if necessary
