@@ -67,11 +67,11 @@ dir.create(save_location)
 
 # # save files using render_function
 # # tryCatch({
-render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
+# render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
 # # }, error = function(e) {
 # # })
 # # tryCatch({
-# bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location) #"Kootenay-Boundary Natural Resource Region"
+bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location) #"Kootenay-Boundary Natural Resource Region"
 # # }, error = function(e) {
 # # })
 # # tryCatch({
@@ -83,7 +83,7 @@ render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_
 # # }, error = function(e) {
 # # })
 # # tryCatch({
-# bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location)
+bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location)
 # # }, error = function(e) {
 # # })
 # # tryCatch({

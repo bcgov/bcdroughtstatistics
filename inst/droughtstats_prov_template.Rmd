@@ -51,17 +51,18 @@ htmltools::img(src = knitr::image_uri(file.path("BCID_V_cmyk_pos_smaller.jpg")),
 
 ```{r packages, include=FALSE}
 # library(tidyverse)
-library(tmap)
+# library(tmap)
 library(bcmaps)
 library(tidyhydat)
 library(lubridate)
 library(sf)
-library(sp)
-library(rmapshaper)
+# library(sp)
+# library(rmapshaper)
 library(kableExtra)
 library(knitr)
-library(RcppRoll)
+# library(RcppRoll)
 library(shadowtext)
+#library(bcmapsdata)
 library(ggplot2)
 library(dplyr)
 library(purrr)
@@ -70,11 +71,11 @@ library(ggrepel)
 library(magick)
 library(RColorBrewer)
 library(leaflet)
-library(remotes)
+# library(remotes)
 #install_github("yonghah/esri2sf")
-library(esri2sf)
+# library(esri2sf)
+library(arcpullr)
 library(bcdroughtstatistics)
-
 # Download BC Gov logo 
 #download_bc_logo()
 ## turns image into a ggplot2 object
@@ -131,16 +132,11 @@ stns_sf <-  sf::st_as_sf(
 # -------------------------------
 
 #Scrape current drought map using the scrape_drought_map() function
-drought <- suppressWarnings(
-  suppressMessages(
-    esri2sf::esri2sf("https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/ArcGIS/rest/services/British_Columbia_Drought_Levels_(Edit)_view/FeatureServer/27", where = "DroughtLevel >= 0", geomType = "esriGeometryPolygon") %>%
-      dplyr::rename(geometry = "geoms") %>%
-      as("Spatial") %>%
-      sp::spTransform(sp::CRS("+proj=longlat +datum=WGS84")) %>%
-      sp::spTransform(sp::CRS("+init=epsg:4326")) %>%
-      sf::st_as_sf()
-  )) %>% 
-  mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin="1970-01-01"),
+drought <- arcpullr::get_spatial_layer("https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/ArcGIS/rest/services/British_Columbia_Drought_Levels_(Edit)_view/FeatureServer/27")  %>%
+  st_as_sf() %>%
+  # st_simplify(dTolerance = 750) %>%
+  st_transform(crs = 4326) %>%
+  mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin = "1970-01-01"),
          DroughtLevel = gsub("Drought Level ","",DroughtLevel))
 
 ### Spatial Cleaning
@@ -166,8 +162,9 @@ region_borders <- st_intersection(nr_regions_sub, bc_bound_hres() %>%
 region_rivers <- st_intersection(nr_regions_sub, watercourses_5M() %>%
   st_transform(4326))
 
-wsc_drainages <- ms_simplify(wsc_drainages() %>%
-  st_transform(4326))
+wsc_drainages <- st_simplify(wsc_drainages() %>%
+  st_transform(4326),
+  dTolerance = 750)
 
 #region_watershed <- st_intersection(select(nr_regions_sub, SHAPE), wsc_drainages()) %>%
 region_watershed <- st_intersection(select(nr_regions_sub, geometry), wsc_drainages) %>%
