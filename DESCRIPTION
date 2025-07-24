@@ -44,7 +44,8 @@ Imports:
     purrr,
     magick,
     leaflet,
-    RColorBrewer
+    RColorBrewer,
+    zoo
 Additional_repositories: https://bcgov.github.io/drat
 Remotes:
     yonghah/esri2sf
