@@ -45,7 +45,8 @@ Imports:
     magick,
     leaflet,
     RColorBrewer,
-    zoo
+    zoo,
+    fasstr
 Additional_repositories: https://bcgov.github.io/drat
 Remotes:
     yonghah/esri2sf
