@@ -18,7 +18,7 @@ Seven Day average streamflow percentiles compare current stream flows (averaged 
 
 ```{r, message = FALSE, warnings = FALSE, include = FALSE}
 
-library(tidyverse)
+# library(tidyverse)
 library(tmap)
 library(bcmaps)
 library(tidyhydat)
