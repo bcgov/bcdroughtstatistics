@@ -53,7 +53,7 @@ dir.create(save_location)
 
 # # save files using render_function
 # # tryCatch({
-render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
+# render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
 # # }, error = function(e) {
 # # })
 # # tryCatch({
