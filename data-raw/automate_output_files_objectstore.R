@@ -6,7 +6,7 @@
 ## LOAD CRAN PACKAGES --------------------------------------------------
 pkgs <- c(
   'pak',
-  'aws.s3',
+  'aws.s3'
 )
 
 #Queries and installs missing packages
