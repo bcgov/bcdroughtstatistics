@@ -66,39 +66,47 @@ save_location <- tempfile("bcdrought_", tmpdir = tempdir())
 dir.create(save_location)
 save_location_r <- paste0(save_location, "/")
 
-# save files using render_function
-# tryCatch({
-render_function_wc("West Coast Natural Resource Region", save_loc = save_location_r)
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
-# }, error = function(e) {
-# })
-# tryCatch({
-bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
-# }, error = function(e) {
-# })
+# # save files using render_function
+# message("West Coast Natural Resource Region")
+# # tryCatch({
+# render_function_wc("West Coast Natural Resource Region", save_loc = save_location_r)
+# # }, error = function(e) {
+# # })
+# message("Kootenay-Boundary Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# message("Northeast Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# message("Omineca Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# message("Thompson-Okanagan Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
+# # }, error = function(e) {
+# # })
+# message("Skeena Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# message("Cariboo Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
+# # }, error = function(e) {
+# # })
+# message("South Coast Natural Resource Region")
+# # tryCatch({
+# bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
+# # }, error = function(e) {
+# # })
 
 
 ## Put html files to objectstore
@@ -111,7 +119,6 @@ region <- ""
 # Authenticate (these are read from env vars set in GitHub Actions)
 Sys.setenv("AWS_ACCESS_KEY_ID" = Sys.getenv("AWS_ACCESS_KEY_ID"))
 Sys.setenv("AWS_SECRET_ACCESS_KEY" = Sys.getenv("AWS_SECRET_ACCESS_KEY"))
-Sys.setenv("AWS_DEFAULT_REGION" = region)
 
 # Upload all HTML files in the directory
 files <- list.files(save_location, full.names = TRUE, pattern = "\\.html$")
