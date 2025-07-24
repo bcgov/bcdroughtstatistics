@@ -38,11 +38,13 @@ Imports:
     rmapshaper,
     kableExtra,
     ggspatial,
-    shadowtext,
-    arcpullr
-Suggests: 
     ggrepel,
-    magick
+    shadowtext,
+    arcpullr,
+    purrr,
+    magick,
+    leaflet,
+    RColorBrewer
 Additional_repositories: https://bcgov.github.io/drat
 Remotes:
     yonghah/esri2sf
