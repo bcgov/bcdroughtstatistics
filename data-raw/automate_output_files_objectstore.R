@@ -21,7 +21,8 @@ if (!file.exists(hydat_path)) {
     message("HYDAT is up-to-date.")
   }
 }
-
+print(Sys.getenv("R_USER_CACHE_DIR"))
+list.files(path = tidyhydat:::hydat_cache_dir(), recursive = TRUE)
 
 
 library(bcdroughtstatistics)
