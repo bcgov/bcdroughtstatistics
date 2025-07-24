@@ -2,6 +2,28 @@
 # Install from github instead of from .tar file
 # remotes::install_github("bcgov/bcdroughtstatistics", force = TRUE)
 
+library(tidyhydat)
+
+# Path where tidyhydat downloads HYDAT by default
+hydat_path <- tidyhydat::hy_default_db()
+
+# Check if file exists
+if (!file.exists(hydat_path)) {
+  message("HYDAT not found. Downloading...")
+  tidyhydat::download_hydat()
+} else {
+  # Optional: check if the file is older than 3 months
+  age_days <- as.numeric(Sys.Date() -as.Date(file.info(hydat_path)$mtime))
+  if (age_days > 90) {
+    message("HYDAT is older than 3 months. Re-downloading...")
+    tidyhydat::download_hydat()
+  } else {
+    message("HYDAT is up-to-date.")
+  }
+}
+
+
+
 library(bcdroughtstatistics)
 
 basins <- c("Cariboo Natural Resource Region",
@@ -22,16 +44,16 @@ basins <- c("Cariboo Natural Resource Region",
 # save_location <- file.path(normalizePath("output", mustWork = FALSE), "")
 # dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
 
-# save_location <- normalizePath("output", mustWork = FALSE)
-# dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
-# print(save_location)
+save_location <- normalizePath("output", mustWork = FALSE)
+dir.create(save_location, recursive = TRUE, showWarnings = TRUE)
+print(save_location)
 
-save_location <- tempfile("bcdrought_", tmpdir = tempdir())
-dir.create(save_location)
+# save_location <- tempfile("bcdrought_", tmpdir = tempdir())
+# dir.create(save_location)
 
 # # save files using render_function
 # # tryCatch({
-bcdroughtstatistics::render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
+render_function_wc("West Coast Natural Resource Region", save_loc = paste0(save_location, "/"))
 # # }, error = function(e) {
 # # })
 # # tryCatch({
