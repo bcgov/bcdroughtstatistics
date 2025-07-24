@@ -38,7 +38,8 @@ Imports:
     rmapshaper,
     kableExtra,
     ggspatial,
-    shadowtext
+    shadowtext,
+    arcpullr
 Suggests: 
     ggrepel,
     magick
