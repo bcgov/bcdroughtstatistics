@@ -61,46 +61,53 @@ dir.create(save_location)
 save_location_r <- paste0(save_location, "/")
 
 # save files using render_function
-message("West Coast Natural Resource Region")
-# tryCatch({
-render_function_wc("West Coast Natural Resource Region", save_loc = save_location_r)
-# }, error = function(e) {
-# })
-message("Kootenay-Boundary Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
-# }, error = function(e) {
-# })
-message("Northeast Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
-# }, error = function(e) {
-# })
-message("Omineca Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
-# }, error = function(e) {
-# })
-message("Thompson-Okanagan Natural Resource Region")
-# tryCatch({
-render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
-# }, error = function(e) {
-# })
-message("Skeena Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
-# }, error = function(e) {
-# })
-message("Cariboo Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
-# }, error = function(e) {
-# })
-message("South Coast Natural Resource Region")
-# tryCatch({
-render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
-# }, error = function(e) {
-# })
+message("Starting West Coast Natural Resource Region (1/8)...")
+tryCatch({
+  render_function_wc("West Coast Natural Resource Region", save_loc = save_location_r)
+}, error = function(e) {
+})
+
+message("Starting Kootenay-Boundary Natural Resource Region (2/8)...")
+tryCatch({
+  render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
+}, error = function(e) {
+})
+
+message("Starting Northeast Natural Resource Region (3/8)...")
+tryCatch({
+  render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
+}, error = function(e) {
+})
+
+message("Starting Omineca Natural Resource Region (4/8)...")
+tryCatch({
+  render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
+}, error = function(e) {
+})
+
+message("Starting Thompson-Okanagan Natural Resource Region (5/8)...")
+tryCatch({
+  render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
+}, error = function(e) {
+})
+
+message("Starting Skeena Natural Resource Region (6/8)...")
+tryCatch({
+  render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
+}, error = function(e) {
+})
+
+message("Starting Cariboo Natural Resource Region (7/8)...")
+tryCatch({
+  render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
+}, error = function(e) {
+})
+
+message("Starting South Coast Natural Resource Region (8/8)...")
+tryCatch({
+  render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
+}, error = function(e) {
+})
 
 
 ## Put html files to objectstore
