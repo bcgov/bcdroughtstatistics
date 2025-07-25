@@ -15,13 +15,8 @@ Sys.setenv(TZ = "America/Vancouver")
 options(timeout = 1200) # 20 minutes
 
 ## Packages
-pkgs <- c(
-  'pak',
-  'aws.s3'
-)
+pkgs <- c('pak', 'aws.s3')
 
-#Queries and installs missing packages
-# options(timeout = 1200)
 new.packages <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, lib = Sys.getenv("R_LIBS_USER"))
 
@@ -31,8 +26,7 @@ pak::pak("bcgov/bcdroughtstatistics", lib = Sys.getenv("R_LIBS_USER"))
 
 
 ## Install HYDAT, if necessary
-
-hydat_path <- tidyhydat::hy_default_db()# Path where tidyhydat downloads HYDAT by default
+hydat_path <- tidyhydat::hy_default_db() # Path where tidyhydat downloads HYDAT by default
 
 # Check if file exists
 if (!file.exists(hydat_path)) {
@@ -117,8 +111,8 @@ bucket_name <- "rfc-conditions/drought_reports"
 region <- ""
 
 # Authenticate (these are read from env vars set in GitHub Actions)
-Sys.setenv("AWS_ACCESS_KEY_ID" = Sys.getenv("AWS_ACCESS_KEY_ID"))
-Sys.setenv("AWS_SECRET_ACCESS_KEY" = Sys.getenv("AWS_SECRET_ACCESS_KEY"))
+# Sys.setenv("AWS_ACCESS_KEY_ID" = Sys.getenv("AWS_ACCESS_KEY_ID"))
+# Sys.setenv("AWS_SECRET_ACCESS_KEY" = Sys.getenv("AWS_SECRET_ACCESS_KEY"))
 
 # Upload all HTML files in the directory
 files <- list.files(save_location, full.names = TRUE, pattern = "\\.html$")
