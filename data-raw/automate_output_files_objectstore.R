@@ -74,37 +74,37 @@ render_function_wc("West Coast Natural Resource Region", save_loc = save_locatio
 # })
 message("Kootenay-Boundary Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
+render_function_bc(basins[2], save_loc = save_location_r) #"Kootenay-Boundary Natural Resource Region"
 # }, error = function(e) {
 # })
 message("Northeast Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
+render_function_bc(basins[3], save_loc = save_location_r) #"Northeast Natural Resource Region"
 # }, error = function(e) {
 # })
 message("Omineca Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
+render_function_bc(basins[4], save_loc = save_location_r) #"Omineca Natural Resource Region"
 # }, error = function(e) {
 # })
 message("Thompson-Okanagan Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
+render_function_to("Thompson-Okanagan Natural Resource Region", save_loc = save_location_r)
 # }, error = function(e) {
 # })
 message("Skeena Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
+render_function_bc(basins[5], save_loc = save_location_r) # "Skeena Natural Resource Region"
 # }, error = function(e) {
 # })
 message("Cariboo Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
+render_function_bc(basins[1], save_loc = save_location_r) #"Cariboo Natural Resource Region"
 # }, error = function(e) {
 # })
 message("South Coast Natural Resource Region")
 # tryCatch({
-bcdroughtstatistics::render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
+render_function_bc(basins[6], save_loc = save_location_r) #"South Coast Natural Resource Region"
 # }, error = function(e) {
 # })
 
