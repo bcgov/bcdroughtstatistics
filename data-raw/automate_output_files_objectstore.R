@@ -12,7 +12,7 @@
 
 ## Options and settings
 Sys.setenv(TZ = "America/Vancouver")
-
+options(timeout = 1200) # 20 minutes
 
 ## Packages
 pkgs <- c(

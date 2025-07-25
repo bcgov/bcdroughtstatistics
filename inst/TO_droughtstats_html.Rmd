@@ -141,8 +141,8 @@ drought <- arcpullr::get_spatial_layer("https://services1.arcgis.com/xeMpV7tU1t4
   st_transform(crs = 4326) %>%
   mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin = "1970-01-01"),
          DroughtLevel = gsub("Drought Level ","",DroughtLevel),
-         Drought_Region = case_when(BasinName %in% c("North Peace","South Peace","Fort Nelson","East Peace") ~ "Northeast",
-                                    BasinName %in% c("Parsnip","Upper Fraser East","Finlay","Upper Fraser West") ~ "Omineca",
+         Drought_Region = case_when(BasinName %in% c("North Peace","South Peace","Fort Nelson","East Peace") ~ "Northeast Natural Resource Region",
+                                    BasinName %in% c("Parsnip","Upper Fraser East","Finlay","Upper Fraser West") ~ "Omineca Natural Resource Region",
                                     BasinName %in% c("Stikine","Northwest","Skeena-Nass","Nechako-Lakes",
                                                      "Skeena-Bulkley") ~ "Skeena Natural Resource Region",
                                     BasinName %in% c("Chilcotin","Clearwater","Quesnel","South Cariboo") ~ "Cariboo Natural Resource Region",
