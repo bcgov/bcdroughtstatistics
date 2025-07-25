@@ -110,6 +110,10 @@ tryCatch({
 })
 
 
+
+message("Saving reports to objectstore...")
+
+
 ## Put html files to objectstore
 library(aws.s3)
 

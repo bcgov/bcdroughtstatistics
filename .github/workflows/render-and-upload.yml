@@ -2,15 +2,15 @@ name: Render low streamflow reports and put to object store
 
 on:
   schedule:
-    - cron: '0 10 * * *'  # Daily at noonish Pacific (20:00 UTC)
-    - cron: '0 13 * * *'  # Daily at noonish Pacific (20:00 UTC)
+    - cron: '0 11 * * *'  # 4am PST
+    - cron: '0 14 * * *'  # 7am PST - backup in case didnt run
   push:
     branches: [master]
 
 jobs:
   render:
     runs-on: ubuntu-latest
-    environment: rfc_env #name of the Github environment where the secrets are stored
+    environment: rfc_env
     env:
       R_LIBS_USER: ~/.local/share/R/library
       TZ: America/Vancouver
@@ -28,7 +28,7 @@ jobs:
       - name: Create HYDAT cache directory
         run: mkdir -p ~/.cache/R/tidyhydat
 
-      - name: Cache R packages # Cache R packages to speed up future runs
+      - name: Cache R packages
         uses: actions/cache@v3
         with:
           path: ~/.local/share/R/library
