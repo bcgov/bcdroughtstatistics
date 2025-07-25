@@ -2,7 +2,8 @@ name: Render low streamflow reports and put to object store
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # Daily at noonish Pacific (20:00 UTC)
+    - cron: '0 10 * * *'  # Daily at noonish Pacific (20:00 UTC)
+    - cron: '0 13 * * *'  # Daily at noonish Pacific (20:00 UTC)
   push:
     branches: [master]
 
