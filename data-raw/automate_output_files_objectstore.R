@@ -128,7 +128,6 @@ for (file in files) {
              object = object_name,
              region = region,
              bucket = bucket_name,
-             multipart = TRUE,
              acl = "public-read")
 }
 
