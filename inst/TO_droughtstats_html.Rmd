@@ -161,7 +161,8 @@ st_spdf <- st_make_valid(st_as_sf(drought, 4326)) %>%
   st_transform(4326)
 
 spdf_select <- st_intersection(st_spdf, drought_sf) %>%
-  st_transform(4326)
+  st_transform(4326) %>% 
+    st_simplify(dTolerance = 750)
 
 ## Find the inters
 region_borders <- st_intersection(nr_regions_sub, bc_bound_hres() %>%
