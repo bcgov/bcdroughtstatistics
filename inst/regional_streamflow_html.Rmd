@@ -149,13 +149,25 @@ drought <- arcpullr::get_spatial_layer("https://services1.arcgis.com/xeMpV7tU1t4
   # st_simplify(dTolerance = 750) %>%
   st_transform(crs = 4326) %>%
   mutate(Date_Modified = as.POSIXct(Date_Modified/1000, origin = "1970-01-01"),
-         DroughtLevel = gsub("Drought Level ","",DroughtLevel))
+         DroughtLevel = gsub("Drought Level ","",DroughtLevel),
+         Drought_Region = case_when(BasinName %in% c("North Peace","South Peace","Fort Nelson","East Peace") ~ "Northeast",
+                                    BasinName %in% c("Parsnip","Upper Fraser East","Finlay","Upper Fraser West") ~ "Omineca",
+                                    BasinName %in% c("Stikine","Northwest","Skeena-Nass","Nechako-Lakes",
+                                                     "Skeena-Bulkley") ~ "Skeena Natural Resource Region",
+                                    BasinName %in% c("Chilcotin","Clearwater","Quesnel","South Cariboo") ~ "Cariboo Natural Resource Region",
+                                    BasinName %in% c("Kootenay River","Kootenay Lake-West Arm","Kettle River",
+                                                     "Upper Columbia","Elk-Flathead Valleys","Creston",
+                                                     "Upper Arrow Lakes","Slocan-Lower Columbia") ~ "Kootenay-Boundary Natural Resource Region",
+                                    BasinName %in% c("Similkameen","Okanagan","North Thompson","Nicola",
+                                                     "South Thompson","Lower Thompson","Bridge") ~ "Thompson-Okanagan Natural Resource Region",
+                                    BasinName %in% c("Sunshine Coast","Eastern Pacific Range","Central Pacific Range","Lower Mainland") ~ "South Coast Natural Resource Region",
+                                    BasinName %in% c("West Vancouver Island","Central Coast","Haida Gwaii","East Vancouver Island") ~ "West Coast Natural Resource Region"))
 
          
 ### Spatial Cleaning
 
 ## Choose the correct region
-nr_regions_sub <- dplyr::filter(bcmaps::nr_regions(), ORG_UNIT_NAME == params$region)  %>%
+nr_regions_sub <- dplyr::filter(bcmaps::nr_regions(), ORG_UNIT_NAME == params$region)  %>% #"West Coast Natural Resource Region"
   st_transform(4326)
 
 # Find the drought polygons that fall within the region
@@ -166,7 +178,11 @@ st_nr_regions_sub <- nr_regions_sub %>%
 st_spdf <- st_make_valid(st_as_sf(drought, 4326)) %>%
   st_transform(4326)
 
-spdf_select <- st_intersection(st_spdf, st_nr_regions_sub) %>% 
+# spdf_select <- st_intersection(st_spdf, st_nr_regions_sub) %>% 
+#     st_simplify(dTolerance = 750)
+
+spdf_select <- drought %>% 
+  filter(Drought_Region == "West Coast Natural Resource Region") %>% 
     st_simplify(dTolerance = 750)
 
 ## Find the inters
