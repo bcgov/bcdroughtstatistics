@@ -452,7 +452,8 @@ if (params$table_format == "html") {
                      popup = ~paste0(`Station Name`,", ", ID, "<br>",
                                     "Seven Day Discharge (m3/s) = ", round(`Latest 7 Day Q (m3/s)`, digits = 2), "<br>", 
                                     "Percentile Category: ", pct_bin_7day, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "https://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>"),
                      label = ~paste0(`Station Name`,", ", ID, " ", pct_bin_7day),
                      options = pathOptions(pane = "Streamflow - Seven Day Percentiles")) %>%
     # Last 24 hours 
@@ -467,7 +468,8 @@ if (params$table_format == "html") {
                                     "Discharge Over Last 24 Hours (m3/s) = ", round(`Last 24 hour Q (m3/s)`, digits = 2), "<br>", 
                                     "Percentile = ", round(`Percentile - Last 24 Hour Q`, digits = 0), "<br>", 
                                     "Percentile Category: ", pct_bin_24hours, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", ID, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "https://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>"),
                      label = ~paste0(`Station Name`,", ", ID, " ", pct_bin_24hours),
                      options = pathOptions(pane = "Streamflow - Last 24 Hour Percentiles")) %>%
     addLegend(colors = naww_pal,
@@ -553,7 +555,7 @@ if (params$table_format == "html"){
 
 ## Long-Term Mean Annual Discharge (% LT MAD)
 
-Environmental flow needs for fish during the summer will range from juvenile rearing flows near 10-20% (preferred) Long-Term Mean Annual Discharge (LT MAD) to adult salmon/char passage flows (>20% LT MAD) required prior to spawning. Sub-standard flows (<10% LT MAD) can affect fish populations by reducing the area and quality of riffle habitats that generate fish food and aeration. Flows nearing 5% LT MAD are considered sub-optimal for fish rearing and migration, indicate a degradation of instream habitat and may require  restrictions on water use. A map of realtime streamflow data can be accessed [at the BC River Forecast Centre website](http://bcrfc.env.gov.bc.ca/freshet/map_all_wsc.html). LT MAD values were calculated by dividing the 7 day mean discharge by the mean annual discharge (MAD) calculated from historic data. MAD values were calculated for stations with at least 5 years of data in the historic record only from years with complete data using the R package [fasstr](https://github.com/bcgov/fasstr).
+Environmental flow needs for fish during the summer will range from juvenile rearing flows near 10-20% (preferred) Long-Term Mean Annual Discharge (LT MAD) to adult salmon/char passage flows (>20% LT MAD) required prior to spawning. Sub-standard flows (<10% LT MAD) can affect fish populations by reducing the area and quality of riffle habitats that generate fish food and aeration. Flows nearing 5% LT MAD are considered sub-optimal for fish rearing and migration, indicate a degradation of instream habitat and may require  restrictions on water use. A map of realtime streamflow data can be accessed [at the BC River Forecast Centre website](https://bcrfc.env.gov.bc.ca/freshet/map_all_wsc.html). LT MAD values were calculated by dividing the 7 day mean discharge by the mean annual discharge (MAD) calculated from historic data. MAD values were calculated for stations with at least 5 years of data in the historic record only from years with complete data using the R package [fasstr](https://github.com/bcgov/fasstr).
 
 Map data was updated on **`r format(Sys.time(), '%d %B %Y, %H:%M %p')`**.
 
@@ -654,7 +656,8 @@ if (params$table_format == "html") {
                      popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
                                     "% MAD = ", round(`% MAD`, digits = 2), "<br>", 
                                     "Percentile Category: ", MAD_bin,"<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"),
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "https://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>"),
                      label = ~paste0(`Station Name`,", ", `ID`, "; % MAD = ", round(`% MAD`, digits = 2)),
                      options = pathOptions(pane = "All sites - % MAD")) %>%
     addCircleMarkers(data = interactive_data_10,
@@ -667,7 +670,8 @@ if (params$table_format == "html") {
                      popup = ~paste0(`Station Name`,", ", `ID`, "<br>",
                                     "% MAD = ", round(`% MAD`, digits = 2), "<br>", 
                                     "Percentile Category: ", MAD_bin, "<br>",
-                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>"), 
+                                    "<a href=\"", "https://wateroffice.ec.gc.ca/report/real_time_e.html?stn=", `ID`, "\" target='_blank'>Link to realtime WSC website (new tab)</a>", "<br>",
+                                    "<a href=\"", "https://bcrfc.env.gov.bc.ca/lowflow/drought_interactive/", `ID`,".html", "\" target='_blank'>Interactive hydrograph (new tab)</a>"), 
                      label = ~paste0(`Station Name`,", ", `ID`, "; % MAD = ", round(`% MAD`, digits = 2)),
                      options = pathOptions(pane = "Sites with % MAD < 10%")) %>%
     addLegend(colors = naww_pal_MAD,
